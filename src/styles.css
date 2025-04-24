@@ -61,4 +61,13 @@ tr.past-game {
 
 tr.past-game:hover {
   background-color: #f0f0f0;
+}
+
+/* Last updated timestamp */
+.last-updated {
+  margin-top: 3em;
+  text-align: center;
+  color: #6c757d;
+  font-size: 0.9em;
+  font-style: italic;
 } 

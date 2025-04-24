@@ -98,7 +98,16 @@ const fullScheduleTable = `
   </tbody>
 </table>`;
 
-const scheduleHtml = `${nextIcePackGameHtml}${nextDruckermanGameHtml}\n<h2>Full Schedule</h2>\n${fullScheduleTable}`;
+const lastUpdated = new Date().toLocaleString('en-US', { 
+  dateStyle: 'medium', 
+  timeStyle: 'short' 
+});
+
+const scheduleHtml = `${nextIcePackGameHtml}${nextDruckermanGameHtml}
+<h2>Full Schedule</h2>
+${fullScheduleTable}
+<div class="last-updated">Last updated: ${lastUpdated}</div>`;
+
 // Replace the schedule div content with the generated HTML
 const finalHtml = templateHtml.replace(
   '<div id="schedule"></div>',
