@@ -1,7 +1,8 @@
-// Replace this with your scraping logic
+import { scrapeDruckermanGames } from "./scrapeDruckermanGames.ts";
+
+const dGames = await scrapeDruckermanGames();
 const hockeySchedule = [
-  { date: "2023-11-01", team: "Team A vs Team B" },
-  { date: "2023-11-02", team: "Team C vs Team D" },
+  ...dGames
 ];
 
 try {
@@ -17,13 +18,15 @@ try {
 // Write scraped data to a JSON file
 await Deno.writeTextFile("public/data/schedule.json", JSON.stringify(hockeySchedule, null, 2));
 
+// TODO: This seems very roundabout...We should load the index.html file,
+// then insert the schedule into the div with id="schedule" instead at build time.
 // Generate a JavaScript file to load the schedule dynamically
 const jsContent = `
   fetch('./data/schedule.json')
     .then(response => response.json())
     .then(data => {
       const scheduleDiv = document.getElementById('schedule');
-      scheduleDiv.innerHTML = data.map(game => \`<p>\${game.date}: \${game.team}</p>\`).join('');
+      scheduleDiv.innerHTML = data.map(game => \`<p>\${game.rink}: \${game.title}</p>\`).join('');
     });
 `;
 await Deno.writeTextFile("public/schedule.js", jsContent);
