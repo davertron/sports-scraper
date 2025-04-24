@@ -1,0 +1,12 @@
+{
+  "version": "4",
+  "remote": {
+    "https://esm.sh/luxon@3.6.1": "40cb1eef583bcf8d154d65b7b37b7787b19b5bf7f51cab938c855fbf383949ac",
+    "https://esm.sh/luxon@3.6.1/denonext/luxon.mjs": "59cb4423a079de19befca41a2f00d0f901d4f73fb62250ce4460bc8889417ad6"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@1"
+    ]
+  }
+}
