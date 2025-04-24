@@ -8,29 +8,30 @@ const hockeySchedule = [
 ];
 
 try {
-  await Deno.stat("public/data");
+  await Deno.stat("public");
 } catch (e) {
   if (e instanceof Deno.errors.NotFound) {
-    await Deno.mkdir("public/data", { recursive: true });
+    await Deno.mkdir("public", { recursive: true });
   } else {
     throw e;
   }
 }
 
-// Write scraped data to a JSON file
-await Deno.writeTextFile("public/data/schedule.json", JSON.stringify(hockeySchedule, null, 2));
+// Read the template HTML file
+const templateHtml = await Deno.readTextFile("src/index.template.html");
 
-// TODO: This seems very roundabout...We should load the index.html file,
-// then insert the schedule into the div with id="schedule" instead at build time.
-// Generate a JavaScript file to load the schedule dynamically
-const jsContent = `
-  fetch('./data/schedule.json')
-    .then(response => response.json())
-    .then(data => {
-      const scheduleDiv = document.getElementById('schedule');
-      scheduleDiv.innerHTML = data.map(game => \`<p>\${game.rink}: \${game.title}</p>\`).join('');
-    });
-`;
-await Deno.writeTextFile("public/schedule.js", jsContent);
+// Generate the schedule HTML
+const scheduleHtml = hockeySchedule
+  .map(game => `<p>${game.team}: ${game.eventStartTime} ${game.opponent} ${game.score}</p>`)
+  .join('');
+
+// Replace the schedule div content with the generated HTML
+const finalHtml = templateHtml.replace(
+  '<div id="schedule"></div>',
+  `<div id="schedule">${scheduleHtml}</div>`
+);
+
+// Write the final HTML file
+await Deno.writeTextFile("public/index.html", finalHtml);
 
 console.log("Site built successfully!");
