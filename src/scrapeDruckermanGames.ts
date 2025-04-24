@@ -10,11 +10,12 @@ type Game = {
 };
 
 // Just print mm/dd/YY
-function formatDate(dateMillis: number) {
-  const date = new Date(dateMillis);
-  const options = { year: "2-digit", month: "2-digit", day: "2-digit" };
-  return new Intl.DateTimeFormat("en-US", options).format(date);
-}
+// Leave this here for now in case we need it
+// function formatDate(dateMillis: number) {
+//   const date = new Date(dateMillis);
+//   const options = { year: "2-digit", month: "2-digit", day: "2-digit" };
+//   return new Intl.DateTimeFormat("en-US", options).format(date);
+// }
 
 // Parse date from "2025-04-11T06:40:00" using luxon.DateTime
 function toUTCMillis(dateString: string) {
@@ -35,7 +36,6 @@ export async function scrapeDruckermanGames() {
   }
 
   const allGames: Game[] = JSON.parse(allGamesString[1]);
-  // console.log(allGames.slice(0, 10));
   const druckermanGames = allGames
     .filter(game => game.AccountName === "Druckerman")
     .map((game: Game) => ({
@@ -47,8 +47,6 @@ export async function scrapeDruckermanGames() {
     }))
     // @ts-ignore TODO: Not sure why it's complaining about date arithmetic...
     .sort((a, b) => a.eventStartTime - b.eventStartTime);
-
-  console.log(druckermanGames);
 
   return druckermanGames;
 }

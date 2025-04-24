@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "build": "deno run --unstable --allow-read --allow-write --allow-net --allow-env build.ts",
+    "build": "deno run --unstable --allow-read --allow-write --allow-net --allow-env src/build.ts",
     "dev": "npx http-server"
   },
   "imports": {
