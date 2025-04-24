@@ -2,34 +2,29 @@ import { scrapeDruckermanGames } from "./scrapeDruckermanGames.ts";
 import { scrapeIcePackGames } from "./scrapeIcePackGames.ts";
 import { Game } from "./types.ts";
 
-function formatTime(hours: number, minutes: number): string {
-  const ampm = hours >= 12 ? 'pm' : 'am';
-  hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-  return `${hours}:${minutes.toString().padStart(2, '0')}${ampm}`;
+function formatTime(date: Date): string {
+  return date.toLocaleString('en-US', { 
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'America/New_York'
+  });
 }
 
 function formatIcePackTime(timestamp: number): string {
   const date = new Date(timestamp);
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  return `${month}/${day} ${formatTime(hours, minutes)}`;
+  const month = date.toLocaleString('en-US', { month: 'numeric', timeZone: 'America/New_York' });
+  const day = date.toLocaleString('en-US', { day: 'numeric', timeZone: 'America/New_York' });
+  return `${month}/${day} ${formatTime(date)}`;
 }
 
 function formatDateRange(startTime: number, endTime: number): string {
   const startDate = new Date(startTime);
   const endDate = new Date(endTime);
-  const month = startDate.getMonth() + 1;
-  const day = startDate.getDate();
+  const month = startDate.toLocaleString('en-US', { month: 'numeric', timeZone: 'America/New_York' });
+  const day = startDate.toLocaleString('en-US', { day: 'numeric', timeZone: 'America/New_York' });
   
-  const startHours = startDate.getHours();
-  const startMinutes = startDate.getMinutes();
-  const endHours = endDate.getHours();
-  const endMinutes = endDate.getMinutes();
-  
-  return `${month}/${day} ${formatTime(startHours, startMinutes)} - ${formatTime(endHours, endMinutes)}`;
+  return `${month}/${day} ${formatTime(startDate)} - ${formatTime(endDate)}`;
 }
 
 function formatIcePackGame(game: Game): string {
@@ -100,7 +95,8 @@ const fullScheduleTable = `
 
 const lastUpdated = new Date().toLocaleString('en-US', { 
   dateStyle: 'medium', 
-  timeStyle: 'short' 
+  timeStyle: 'short',
+  timeZone: 'America/New_York'
 });
 
 const scheduleHtml = `${nextIcePackGameHtml}${nextDruckermanGameHtml}
