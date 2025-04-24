@@ -26,7 +26,7 @@ jobs:
 
       # Build the site
       - name: Build site
-        run: lume
+        run: deno task lume
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
