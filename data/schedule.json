@@ -1,10 +1,128 @@
 [
   {
-    "date": "2023-11-01",
-    "team": "Team A vs Team B"
+    "title": "5:55 PM - 7:10 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1744840500000,
+    "eventEndTime": 1744845000000,
+    "eventId": 2840188
   },
   {
-    "date": "2023-11-02",
-    "team": "Team C vs Team D"
+    "title": "7:00 PM - 8:15 PM",
+    "rink": "Cairns 2",
+    "eventStartTime": 1745449200000,
+    "eventEndTime": 1745453700000,
+    "eventId": 2840189
+  },
+  {
+    "title": "6:40 PM - 7:55 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1746139200000,
+    "eventEndTime": 1746143700000,
+    "eventId": 2840190
+  },
+  {
+    "title": "10:00 PM - 11:15 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1746669600000,
+    "eventEndTime": 1746674100000,
+    "eventId": 2840191
+  },
+  {
+    "title": "10:00 PM - 11:15 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1747879200000,
+    "eventEndTime": 1747883700000,
+    "eventId": 2840192
+  },
+  {
+    "title": "9:45 PM - 11:00 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1748483100000,
+    "eventEndTime": 1748487600000,
+    "eventId": 2840193
+  },
+  {
+    "title": "9:05 PM - 10:20 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1748999100000,
+    "eventEndTime": 1749003600000,
+    "eventId": 2840194
+  },
+  {
+    "title": "9:05 PM - 10:20 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1749603900000,
+    "eventEndTime": 1749608400000,
+    "eventId": 2840195
+  },
+  {
+    "title": "9:05 PM - 10:20 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1750208700000,
+    "eventEndTime": 1750213200000,
+    "eventId": 2840196
+  },
+  {
+    "title": "9:30 PM - 10:45 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1750815000000,
+    "eventEndTime": 1750819500000,
+    "eventId": 2840197
+  },
+  {
+    "title": "9:55 PM - 11:10 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1752112500000,
+    "eventEndTime": 1752117000000,
+    "eventId": 2840198
+  },
+  {
+    "title": "7:20 PM - 8:35 PM",
+    "rink": "Cairns 2",
+    "eventStartTime": 1752621600000,
+    "eventEndTime": 1752626100000,
+    "eventId": 2840199
+  },
+  {
+    "title": "9:20 PM - 10:35 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1753233600000,
+    "eventEndTime": 1753238100000,
+    "eventId": 2840200
+  },
+  {
+    "title": "7:55 PM - 9:10 PM",
+    "rink": "Cairns 2",
+    "eventStartTime": 1753833300000,
+    "eventEndTime": 1753837800000,
+    "eventId": 2840202
+  },
+  {
+    "title": "9:20 PM - 10:35 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1754443200000,
+    "eventEndTime": 1754447700000,
+    "eventId": 2840203
+  },
+  {
+    "title": "9:10 PM - 10:25 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1755047400000,
+    "eventEndTime": 1755051900000,
+    "eventId": 2840204
+  },
+  {
+    "title": "8:10 PM - 9:25 PM",
+    "rink": "Cairns 1",
+    "eventStartTime": 1755648600000,
+    "eventEndTime": 1755653100000,
+    "eventId": 2840205
+  },
+  {
+    "title": "8:40 PM - 9:55 PM",
+    "rink": "Cairns 2",
+    "eventStartTime": 1756255200000,
+    "eventEndTime": 1756259700000,
+    "eventId": 2840206
   }
 ]
