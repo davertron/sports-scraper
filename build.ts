@@ -4,6 +4,16 @@ const hockeySchedule = [
   { date: "2023-11-02", team: "Team C vs Team D" },
 ];
 
+try {
+  await Deno.stat("public/data");
+} catch (e) {
+  if (e instanceof Deno.errors.NotFound) {
+    await Deno.mkdir("public/data", { recursive: true });
+  } else {
+    throw e;
+  }
+}
+
 // Write scraped data to a JSON file
 await Deno.writeTextFile("public/data/schedule.json", JSON.stringify(hockeySchedule, null, 2));
 
