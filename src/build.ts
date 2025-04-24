@@ -1,8 +1,10 @@
 import { scrapeDruckermanGames } from "./scrapeDruckermanGames.ts";
+import { scrapeIcePackGames } from "./scrapeIcePackGames.ts";
 
-const dGames = await scrapeDruckermanGames();
+const [dGames, iGames] = await Promise.all([scrapeDruckermanGames(), scrapeIcePackGames()]);
 const hockeySchedule = [
-  ...dGames
+  ...dGames,
+  ...iGames,
 ];
 
 try {

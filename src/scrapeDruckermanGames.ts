@@ -1,21 +1,5 @@
 import { DateTime } from "https://esm.sh/luxon@3.6.1";
-
-type Game = {
-  AccountName: string;
-  EventStartTime: string;
-  EventEndTime: string;
-  FacilityName: string;
-  title: string;
-  EventId: string;
-};
-
-// Just print mm/dd/YY
-// Leave this here for now in case we need it
-// function formatDate(dateMillis: number) {
-//   const date = new Date(dateMillis);
-//   const options = { year: "2-digit", month: "2-digit", day: "2-digit" };
-//   return new Intl.DateTimeFormat("en-US", options).format(date);
-// }
+import { CairnsGame, Game } from "./types.ts";
 
 // Parse date from "2025-04-11T06:40:00" using luxon.DateTime
 function toUTCMillis(dateString: string) {
@@ -25,7 +9,7 @@ function toUTCMillis(dateString: string) {
   return dt.toMillis();
 }
 
-export async function scrapeDruckermanGames() {
+export async function scrapeDruckermanGames(): Promise<Game[]> {
   const response = await fetch("https://cairnsarena.finnlyconnect.com/schedule/460");
   const html = await response.text();
 
@@ -35,15 +19,17 @@ export async function scrapeDruckermanGames() {
     return [];
   }
 
-  const allGames: Game[] = JSON.parse(allGamesString[1]);
+  const allGames: CairnsGame[] = JSON.parse(allGamesString[1]);
   const druckermanGames = allGames
     .filter(game => game.AccountName === "Druckerman")
-    .map((game: Game) => ({
-      title: game.title,
+    .map((game: CairnsGame) => ({
       rink: game.FacilityName.replace("Rink", "Cairns"),
       eventStartTime: toUTCMillis(game.EventStartTime),
       eventEndTime: toUTCMillis(game.EventEndTime),
-      eventId: game.EventId,
+      sourceId: game.EventId,
+      opponent: "",
+      score: "",
+      team: "Druckerman",
     }))
     // @ts-ignore TODO: Not sure why it's complaining about date arithmetic...
     .sort((a, b) => a.eventStartTime - b.eventStartTime);
