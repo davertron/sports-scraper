@@ -26,12 +26,12 @@ jobs:
 
       # Build the site
       - name: Build site
-        run: deno run --allow-read --allow-write --allow-net src/build.ts
+        run: lume
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+          publish_dir: ./_site
           publish_branch: gh-pages
