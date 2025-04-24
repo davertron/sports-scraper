@@ -1,5 +1,5 @@
 import { DateTime } from "https://esm.sh/luxon@3.6.1";
-import { CairnsGame, Game } from "./types.ts";
+import { CairnsGame, Game } from "../types.ts";
 
 // Parse date from "2025-04-11T06:40:00" using luxon.DateTime
 function toUTCMillis(dateString: string) {

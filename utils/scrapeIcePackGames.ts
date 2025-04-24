@@ -1,6 +1,6 @@
 import * as cheerio from "https://esm.sh/cheerio@1.0.0";
 import { DateTime } from "https://esm.sh/luxon@3.6.1";
-import { Game } from "./types.ts";
+import { Game } from "../types.ts";
 
 // The dates look like this: Jan 14 (Tue)9:50 pm
 function parseDate(dateString: string) {
