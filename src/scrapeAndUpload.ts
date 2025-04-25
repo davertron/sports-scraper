@@ -1,6 +1,7 @@
 import { scrapeDruckermanGames } from "./utils/scrapeDruckermanGames.ts";
 import { scrapeIcePackGames } from "./utils/scrapeIcePackGames.ts";
 import { uploadToS3 } from "./utils/s3.ts";
+import { createHash } from "node:crypto";
 
 async function main() {
   try {
@@ -12,8 +13,9 @@ async function main() {
     const games = [...dGames, ...iGames];
     console.log(`Successfully scraped ${games.length} games`);
 
-    const timestamp = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-    const key = `hockey-games/hockey-games-${timestamp}.json`;
+    const dataString = JSON.stringify(games);
+    const hash = createHash("sha256").update(dataString).digest("hex");
+    const key = `hockey-games/${hash}.json`;
     
     const uploaded = await uploadToS3(games, key);
     if (uploaded) {
