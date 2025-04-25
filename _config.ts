@@ -1,7 +1,9 @@
 import lume from "lume/mod.ts";
 
-const site = lume();
+const site = lume({
+  location: new URL("https://davertron.github.io/sports-scraper/"),
+});
 
-site.copy("styles.css");
+site.copy("static");
 
 export default site;

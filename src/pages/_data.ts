@@ -1,7 +1,7 @@
-import { scrapeDruckermanGames } from "./utils/scrapeDruckermanGames.ts";
-import { scrapeIcePackGames } from "./utils/scrapeIcePackGames.ts";
-import { Game } from "./types.ts";
-import { formatIcePackGame, formatDruckermanGame, formatGameTime } from "./utils/formatters.ts";
+import { scrapeDruckermanGames } from "../utils/scrapeDruckermanGames.ts";
+import { scrapeIcePackGames } from "../utils/scrapeIcePackGames.ts";
+import { Game } from "../types.ts";
+import { formatIcePackGame, formatDruckermanGame, formatGameTime } from "../utils/formatters.ts";
 
 const [dGames, iGames] = await Promise.all([scrapeDruckermanGames(), scrapeIcePackGames()]);
 

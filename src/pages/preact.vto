@@ -1,0 +1,23 @@
+---
+title: "Preact Test"
+layout: "layout.vto"
+url: "/preact-test"
+---
+
+<div class="preact-thing"></div>
+<div class="preact-thing"></div>
+
+<script type="module">
+  // Just adding this here as an example of how to use Preact in this context
+  import { h, render } from 'https://esm.sh/preact';
+
+  function Greeting() {
+    return h('h1', null, 'Greetings from Preact!');
+  }
+
+  // Create your app
+  const app = h(Greeting);
+  document.querySelectorAll('.preact-thing').forEach(el => {
+    render(app, el);
+  });
+</script>
