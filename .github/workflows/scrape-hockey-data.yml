@@ -29,3 +29,4 @@ jobs:
         run: deno task scrape
         env:
           AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}

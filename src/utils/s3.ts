@@ -1,4 +1,5 @@
 import { S3Client, PutObjectCommand, GetObjectCommand, CopyObjectCommand } from "https://esm.sh/@aws-sdk/client-s3@3.540.0";
+import { CloudFrontClient, CreateInvalidationCommand } from "https://esm.sh/@aws-sdk/client-cloudfront@3.540.0";
 
 const s3Client = new S3Client({
   region: Deno.env.get("AWS_REGION") || "us-east-1",
@@ -8,8 +9,17 @@ const s3Client = new S3Client({
   },
 });
 
+const cloudfrontClient = new CloudFrontClient({
+  region: Deno.env.get("AWS_REGION") || "us-east-1",
+  credentials: {
+    accessKeyId: Deno.env.get("AWS_ACCESS_KEY_ID") || "",
+    secretAccessKey: Deno.env.get("AWS_SECRET_ACCESS_KEY") || "",
+  },
+});
+
 export async function uploadToS3(data: unknown, key: string): Promise<boolean> {
   const bucket = Deno.env.get("AWS_BUCKET_NAME");
+  const distributionId = Deno.env.get("CLOUDFRONT_DISTRIBUTION_ID");
   
   if (!bucket) {
     throw new Error("AWS_BUCKET_NAME environment variable is required");
@@ -49,6 +59,24 @@ export async function uploadToS3(data: unknown, key: string): Promise<boolean> {
 
     await s3Client.send(copyCommand);
     console.log(`Successfully copied to s3://${bucket}/hockey-games/latest.json`);
+
+    // Invalidate CloudFront cache if distribution ID is provided
+    if (distributionId) {
+      const invalidationCommand = new CreateInvalidationCommand({
+        DistributionId: distributionId,
+        InvalidationBatch: {
+          CallerReference: Date.now().toString(),
+          Paths: {
+            Quantity: 1,
+            Items: ["/hockey-games/latest.json"],
+          },
+        },
+      });
+
+      await cloudfrontClient.send(invalidationCommand);
+      console.log("Successfully invalidated CloudFront cache");
+    }
+
     return true;
   } catch (error) {
     console.error("Error uploading to S3:", error);

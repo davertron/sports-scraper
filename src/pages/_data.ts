@@ -1,21 +1,14 @@
-import { scrapeDruckermanGames } from "../utils/scrapeDruckermanGames.ts";
-import { scrapeIcePackGames } from "../utils/scrapeIcePackGames.ts";
 import { Game } from "../types.ts";
 import { formatIcePackGame, formatDruckermanGame, formatGameTime } from "../utils/formatters.ts";
 
-const [dGames, iGames] = await Promise.all([scrapeDruckermanGames(), scrapeIcePackGames()]);
+const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
+const games = await response.json() as Game[];
 
-export const games = [
-    ...dGames,
-    ...iGames,
-]
-
-export const nextIcePackGame = iGames.find(game => game.eventStartTime > Date.now());
-export const nextDruckermanGame = dGames.find(game => game.eventStartTime > Date.now());
+export const nextIcePackGame = games.find(game => game.team === "Ice Pack" && game.eventStartTime > Date.now());
+export const nextDruckermanGame = games.find(game => game.team === "Druckerman" && game.eventStartTime > Date.now());
 
 export const nextIcePackGameFormatted = formatIcePackGame(nextIcePackGame);
 export const nextDruckermanGameFormatted = formatDruckermanGame(nextDruckermanGame);
-
 
 function convertToTableRow(game: Game): {
   isPastGame: boolean;
