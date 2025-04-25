@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Preact Test</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <div class="preact-thing"></div>
+<div class="preact-thing"></div>
+
+<script type="module">
+  // Just adding this here as an example of how to use Preact in this context
+  import { h, render } from 'https://esm.sh/preact';
+
+  function Greeting() {
+    return h('h1', null, 'Greetings from Preact!');
+  }
+
+  // Create your app
+  const app = h(Greeting);
+  document.querySelectorAll('.preact-thing').forEach(el => {
+    render(app, el);
+  });
+</script>
+    <div id="last-updated">Last updated: Fri Apr 25 2025 03:09:30 GMT+0000 (Coordinated Universal Time)</div>
+  </body>
+</html>
