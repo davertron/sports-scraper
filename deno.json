@@ -6,7 +6,8 @@
     "lume": "echo \"import 'lume/cli.ts'\" | deno run -A -",
     "build": "deno task lume",
     "serve": "deno task lume -s",
-    "scrape": "deno run --env-file=.env --allow-env --allow-read --allow-net --allow-sys src/scrapeAndUpload.ts"
+    "scrape": "deno run --env-file=.env --allow-env --allow-read --allow-net --allow-sys src/scrapeAndUpload.ts",
+    "calendar": "deno run --env-file=.env --allow-env --allow-read --allow-net --allow-sys src/generateCalendar.ts"
   },
   "compilerOptions": {
     "types": [
