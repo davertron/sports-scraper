@@ -5,6 +5,7 @@ on:
     workflows: ["Scrape Hockey Data"]
     types:
       - completed
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   generate-calendar:
