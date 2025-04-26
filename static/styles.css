@@ -140,15 +140,24 @@ h2 {
 .container ul {
   list-style: none;
   padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin: 2rem 0;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container ul li {
+  width: 100%;
 }
 
 .container ul li a {
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
   padding: 0.75rem 1.5rem;
   background-color: #f8f9fa;
   border-radius: 8px;
@@ -157,6 +166,14 @@ h2 {
   font-weight: 500;
   transition: all 0.2s ease;
   border: 1px solid #e1e1e1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.container ul li a svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
 }
 
 .container ul li a:hover {
@@ -165,6 +182,10 @@ h2 {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-color: #2c3e50;
+}
+
+.container ul li a:hover svg path[fill="#fff"] {
+  fill: white;
 }
 
 /* Specific styles for personal index page */
