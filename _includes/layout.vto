@@ -4,9 +4,15 @@
     <meta charset="UTF-8" />
     <title>{{ title }}</title>
     <link rel="stylesheet" href="/static/styles.css">
+    <script type="module">
+      import { updateTimestamps } from '/static/timestamp.js';
+      document.addEventListener('DOMContentLoaded', updateTimestamps);
+    </script>
   </head>
-  <body>
-    {{ content }}
-    <div id="last-updated">Last updated: {{date}}</div>
+  <body class="{{ bodyClass || '' }}">
+    <main>
+      {{ content }}
+    </main>
+    <div id="last-updated">Last updated: <span class="timestamp">{{date}}</span></div>
   </body>
 </html>
