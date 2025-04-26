@@ -11,7 +11,7 @@ import {
 
 const s3Client = new S3Client({});
 const cloudfrontClient = new CloudFrontClient({});
-const distributionId = Deno.env.get("CLOUDFRONT_DISTRIBUTION_ID");
+const distributionId = Deno.env.get("DATA_CLOUDFRONT_DISTRIBUTION_ID");
 
 async function copyToLatestAndInvalidate(sourceKey: string): Promise<void> {
   const bucket = Deno.env.get("AWS_BUCKET_NAME");

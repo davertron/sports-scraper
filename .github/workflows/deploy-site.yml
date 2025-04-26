@@ -41,9 +41,9 @@ jobs:
           aws s3 sync ./_site s3://${{ secrets.STATIC_SITE_BUCKET }} --delete
         env:
           AWS_BUCKET_NAME: ${{ secrets.STATIC_SITE_BUCKET }}
-          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.SITE_CLOUDFRONT_DISTRIBUTION_ID }}
 
       # Invalidate CloudFront cache
       - name: Invalidate CloudFront cache
         run: |
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.SITE_CLOUDFRONT_DISTRIBUTION_ID }} --paths "/*"
