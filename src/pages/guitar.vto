@@ -1,0 +1,45 @@
+---
+title: "davertron.com - Guitar"
+url: "/guitar.html"
+layout: "layout.vto"
+---
+
+<div id="guitar-app"></div>
+<img src="/static/guitar_guide.png" />
+
+<script type="module">
+  import { h, render } from 'https://esm.sh/preact';
+
+  const d = {w: 800, h: 200};
+  const stringGap = d.h / 5;
+  const nutWidth = d.w * .05;
+  const fretGap = d.w / 11;
+  const fretPositions = [];
+  for (let i = 1; i < 11; i++) {
+    fretPositions.push(i * fretGap);
+  }
+  function Fretboard() {
+    return h('svg', {width: d.w, height: d.h},
+      //h('text', { id: 'low-e', x: 0, y: d.h, style: 'font: bold 26px sans-serif', fill: 'black'}, 'E'),
+      h('g', {transform: 'translate(20, 0)'}, [ 
+        h('rect', { id: 'nut', width: nutWidth, height: d.h, fill: 'black' }),
+        h('g', {transform: `translate(${nutWidth}, 0)`, 'stroke-width': 3}, [
+          h('line', { id: 'low-e', x1: 0, y1: d.h, x2: d.w, y2: d.h, stroke: 'black'}),
+          h('line', { id: 'a', x1: 0, y1: d.h - stringGap, x2: d.w, y2: d.h - stringGap, stroke: 'black', strokeWidth: 3 }),
+          h('line', { id: 'd', x1: 0, y1: d.h - 2 * stringGap, x2: d.w, y2: d.h - 2 * stringGap, stroke: 'black', strokeWidth: 3 }),
+          h('line', { id: 'g', x1: 0, y1: d.h - 3 * stringGap, x2: d.w, y2: d.h - 3 * stringGap, stroke: 'black', strokeWidth: 3 }),
+          h('line', { id: 'b', x1: 0, y1: d.h - 4 * stringGap, x2: d.w, y2: d.h - 4 * stringGap, stroke: 'black', strokeWidth: 3 }),
+          h('line', { id: 'high-e', x1: 0, y1: d.h - 5 * stringGap, x2: d.w, y2: d.h - 5 * stringGap, stroke: 'black', strokeWidth: 8}),
+          ...fretPositions.map((x, i) => 
+            h('line', { id: 'fret-' + i, x1: x, y1: 0, x2: x, y2: d.h, stroke: 'black', strokeWidth: 3 })
+          ),
+        ]),
+      ]),
+    );
+  }
+
+  // Create your app
+  const app = h(Fretboard);
+  render(app, document.getElementById('guitar-app'));
+
+</script>
