@@ -1,8 +1,11 @@
 # TODO List
 
 ## High Priority
+- [ ] Calendar view of upcoming hockey games (1 week view)
+- [ ] Interactive guitar fretboard
 
 ## Medium Priority
+- [ ] Icons or some way to distinguish between Ice Pack and Druckerman games
 - [ ] Look into a subdir for lume pages, so we don't have to worry about explicitly excluding new files all the time.
 
 ## Low Priority
