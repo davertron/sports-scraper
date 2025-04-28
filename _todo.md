@@ -26,6 +26,7 @@
 - [x] @guitar: Add better dynamic styling for guitar app. Currently it's hard-coded, it should be dynamic based on viewport size etc.
 - [x] @guitar: Add styling of highlights (i.e. color root note differently)
 - [x] @guitar: Add a "note" mode to the guitar app, where you can select a note and see every position of that note on the fretboard.
+- [x] @guitar: Had a cool idea...what if you can "query" the fretboard and it shows results based on the query. For example you could do something like: "A major scale, frets 3-5", or "A major scale, 1, 2, 3, 5, 6" to get the pentatonic scale. I would need to write a parser to express this and translate it into filters on the javascript side. Also need to think about what the query language should look like (i.e. just use SQL? Or something more basic and straight-forward like a DSL?)
 
 ## Notes
 - Use [ ] for incomplete tasks

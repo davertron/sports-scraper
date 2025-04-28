@@ -23,6 +23,7 @@ layout: "layout.vto"
 <script type="module">
   import { h, render } from 'https://esm.sh/preact';
   import { signal, computed } from 'https://esm.sh/@preact/signals';
+  import { useState } from 'https://esm.sh/preact/hooks';
 
 
   // https://coolors.co/palette/58b441-f65128-0d6191-ecf9f3-ffffff
@@ -122,9 +123,9 @@ layout: "layout.vto"
   }
 
   function Fretboard({highlights}) {
-    const highlightMarkers = highlights.value.map((m) => {
+    const highlightMarkers = (highlights?.value || []).map((m) => {
       const {string, fret, label} = m;
-      const x = fret > 0 ? fretPositions[fret - 1] - fretGap / 2 : -nutWidth;
+      const x = fret > 0 ? (fret === numOfFrets ? fretBoardWidth - nutWidth - fretGap / 2 : fretPositions[fret - 1] - fretGap / 2) : -nutWidth;
       const y = getStringY(string);
       return h('g', { transform: `translate(${x}, ${y})` }, [
         h('circle', { 
@@ -214,54 +215,310 @@ layout: "layout.vto"
     ]);
   }
 
-  // Create your app
-  const aMinorPentatonicScale = generateMinorPentatonicScale(5); // Should be A minor pentatonic
-  const aMinorPentatonicHighlights = aMinorPentatonicScale.map((m) => ({
-    string: m.string,
-    fret: m.fret,
-    label: getNote(m.fret, m.string),
-  })).map((m) => ({
-    ...m,
-    isRoot: m.label === 'A',
-  })).map((m) => ({
-    ...m,
-    color: m.isRoot ? HIGHLIGHT_COLORS.ROOT : null,
-  }));
-
-  const mode = signal('key');
-  const note = signal('C');
-  const highlights = computed(() => {
-    if (mode.value === 'pentatonic') {
-      return aMinorPentatonicHighlights;
-    }
-
-    const strings = ['E', 'A', 'D', 'G', 'B', 'e'];
-    const key = getKey(note.value);
-    const highlights = [];
-    const getColor = (n) => {
-      if (n === note.value) {
-        return HIGHLIGHT_COLORS.ROOT;
-      } else if (key.indexOf(n) == 3 || key.indexOf(n) == 6) {
-        // The 4th and 7th notes of the scale are left out for pentatonic
-        return HIGHLIGHT_COLORS.LIGHT_NOTE;
+  // Test suite for query parser
+  function testQueryParser() {
+    const tests = [
+      {
+        query: 'show c major',
+        expected: [{
+          type: 'scale',
+          note: 'C',
+          scaleType: 'major',
+          excludedDegrees: [],
+          fretRange: null,
+          strings: null
+        }]
+      },
+      {
+        query: 'show c major without 4th and 7th',
+        expected: [{
+          type: 'scale',
+          note: 'C',
+          scaleType: 'major',
+          excludedDegrees: [4, 7],
+          fretRange: null,
+          strings: null
+        }]
+      },
+      {
+        query: 'show c major between frets 5-8',
+        expected: [{
+          type: 'scale',
+          note: 'C',
+          scaleType: 'major',
+          excludedDegrees: [],
+          fretRange: { start: 5, end: 8 },
+          strings: null
+        }]
+      },
+      {
+        query: 'show c major on strings E and A',
+        expected: [{
+          type: 'scale',
+          note: 'C',
+          scaleType: 'major',
+          excludedDegrees: [],
+          fretRange: null,
+          strings: ['E', 'A']
+        }]
+      },
+      {
+        query: 'show c major without 4th and 7th between frets 5-8 on strings E and A',
+        expected: [{
+          type: 'scale',
+          note: 'C',
+          scaleType: 'major',
+          excludedDegrees: [4, 7],
+          fretRange: { start: 5, end: 8 },
+          strings: ['E', 'A']
+        }]
+      },
+      {
+        query: 'show c major without 4th and 7th between frets 5-8 on strings E and A and c major without 4th and 7th between frets 7-10 on strings D and G',
+        expected: [
+          {
+            type: 'scale',
+            note: 'C',
+            scaleType: 'major',
+            excludedDegrees: [4, 7],
+            fretRange: { start: 5, end: 8 },
+            strings: ['E', 'A']
+          },
+          {
+            type: 'scale',
+            note: 'C',
+            scaleType: 'major',
+            excludedDegrees: [4, 7],
+            fretRange: { start: 7, end: 10 },
+            strings: ['D', 'G']
+          }
+        ]
       }
-      return null;
-    };
-    for (let i = 0; i < strings.length; i++) {
-      for (let j = 0; j < numOfFrets; j++) {
-        const n = getNote(j, strings[i]);
-        if (key.includes(n)) {
-          highlights.push({string: strings[i], fret: j, label: n, color: getColor(n)});
+    ];
+
+    let passedCount = 0;
+    let failedCount = 0;
+    
+    tests.forEach(({query, expected}) => {
+      try {
+        const result = parseQuery(query);
+        const isPassed = JSON.stringify(result) === JSON.stringify(expected);
+        console.log(`${isPassed ? '✅' : '❌'} Test: "${query}"`);
+        if (!isPassed) {
+          console.log('Expected:', expected);
+          console.log('Got:', result);
         }
+        isPassed ? passedCount++ : failedCount++;
+      } catch (e) {
+        console.log(`❌ Test failed: "${query}"`);
+        console.log('Error:', e.message);
+        failedCount++;
       }
-    }
+    });
 
-    return highlights;
+    console.log(`\nTest Results: ${passedCount} passed, ${failedCount} failed`);
+  }
+
+  // Query parser for guitar scales
+  function parseQuery(query) {
+    const normalized = query.toLowerCase().trim();
+    //console.log('Parsing query:', normalized);
+    
+    // Split into individual commands, being careful not to split on 'and' within other parts
+    const commands = [];
+    let currentCommand = '';
+    let inStringList = false;
+    let inWithoutList = false;
+    
+    for (let i = 0; i < normalized.length; i++) {
+      const char = normalized[i];
+      const nextChars = normalized.slice(i, i + 4);
+      
+      // Only split on ' and' if we're not in a string list or without list
+      if (nextChars === ' and' && !inStringList && !inWithoutList) {
+        commands.push(currentCommand.trim());
+        currentCommand = '';
+        i += 3; // Skip the ' and'
+        continue;
+      }
+      
+      // Track if we're in a string list or without list
+      if (normalized.slice(i, i + 7) === 'strings') inStringList = true;
+      if (normalized.slice(i, i + 7) === 'without') inWithoutList = true;
+      
+      // End string list when we hit the next command
+      if (nextChars === ' and' && inStringList) inStringList = false;
+      if (nextChars === ' and' && inWithoutList) inWithoutList = false;
+      
+      currentCommand += char;
+    }
+    
+    if (currentCommand.trim()) {
+      commands.push(currentCommand.trim());
+    }
+    
+    //console.log('Split commands:', commands);
+    
+    return commands.map(cmd => {
+      //console.log('Processing command:', cmd);
+      
+      // First match the basic pattern: show [note] [scale]
+      const basicMatch = cmd.match(/(?:show\s+)?([a-g]#?)\s+(major|minor)/i);
+      //console.log('Basic match:', basicMatch);
+      
+      if (!basicMatch) {
+        throw new Error('Invalid query format. Try: "show c major" or "show a minor without 4th and 7th between frets 5-8 on strings E and A"');
+      }
+      
+      // Parse the basic components
+      const [_, note, scaleType] = basicMatch;
+      //console.log('Basic components:', { note, scaleType });
+      
+      // Look for optional components
+      const withoutMatch = cmd.match(/without\s+((?:\d+(?:th|st|nd|rd)?(?:\s+and\s+\d+(?:th|st|nd|rd)?)*))/i);
+      //console.log('Without match:', withoutMatch);
+      
+      const fretMatch = cmd.match(/between\s+frets\s+(\d+)-(\d+)/i);
+      //console.log('Fret match:', fretMatch);
+      
+      const stringsMatch = cmd.match(/on\s+strings\s+((?:[a-ge](?:\s+and\s+[a-ge])*))/i);
+      //console.log('Strings match:', stringsMatch);
+      
+      const result = {
+        type: 'scale',
+        note: note.toUpperCase(),
+        scaleType,
+        excludedDegrees: withoutMatch ? withoutMatch[1].split(/\s+and\s+/).map(d => parseInt(d.replace(/th|st|nd|rd/, ''))) : [],
+        fretRange: fretMatch ? { start: parseInt(fretMatch[1]), end: parseInt(fretMatch[2]) } : null,
+        strings: stringsMatch ? stringsMatch[1].split(/\s+and\s+/).map(s => s.trim().toUpperCase()) : null
+      };
+      
+      //console.log('Result:', result);
+      return result;
+    });
+  }
+
+  function getScaleDegrees(note, scaleType) {
+    const root = notes.indexOf(note.toUpperCase());
+    const intervals = scaleType === 'major' ? [0, 2, 4, 5, 7, 9, 11] : [0, 2, 3, 5, 7, 8, 10];
+    return intervals.map((interval, index) => ({
+      note: notes[(root + interval) % notes.length],
+      degree: index + 1
+    }));
+  }
+
+  function QueryInput({onQueryChange}) {
+    const [queryText, setQueryText] = useState('');
+    const [error, setError] = useState('');
+
+    const exampleQueries = [
+      'show c major',
+      'show c major without 4th and 7th',
+      'show c major between frets 5-8',
+      'show c major on strings E and A',
+      'show c major without 4th and 7th between frets 5-8 on strings E and A'
+    ];
+
+    return h('div', {style: 'margin-bottom: 20px'}, [
+      h('div', {style: 'margin-bottom: 10px'}, [
+        h('label', {style: 'display: block; margin-bottom: 5px'}, 'Query'),
+        h('div', {style: 'display: flex; gap: 10px'}, [
+          h('input', {
+            type: 'text',
+            value: queryText,
+            placeholder: 'show c major without 4th and 7th between frets 5-8 on strings E and A',
+            style: 'width: 600px; padding: 8px; font-size: 16px',
+            onInput: (e) => {
+              setQueryText(e.target.value);
+              setError('');
+            },
+            onKeyDown: (e) => {
+              if (e.key === 'Enter') {
+                try {
+                  onQueryChange(queryText);
+                  setError('');
+                } catch (e) {
+                  setError(e.message);
+                }
+              }
+            }
+          }),
+          h('button', {
+            style: 'padding: 8px 16px; font-size: 16px',
+            onClick: () => {
+              try {
+                onQueryChange(queryText);
+                setError('');
+              } catch (e) {
+                setError(e.message);
+              }
+            }
+          }, 'Submit')
+        ])
+      ]),
+      error && h('div', {style: 'color: red; margin-bottom: 10px'}, error),
+      h('div', {style: 'margin-top: 20px'}, [
+        h('div', {style: 'margin-bottom: 5px'}, 'Example queries:'),
+        h('div', {style: 'display: flex; flex-direction: column; gap: 5px'}, 
+          exampleQueries.map(q => 
+            h('button', {
+              style: 'text-align: left; padding: 5px; background: none; border: none; color: blue; cursor: pointer',
+              onClick: () => {
+                setQueryText(q);
+                setError('');
+              }
+            }, q)
+          )
+        )
+      ])
+    ]);
+  }
+
+  // Create your app
+  const query = signal('');
+  const markers = computed(() => {
+    if (!query.value) return [];
+
+    try {
+      const parsedQueries = parseQuery(query.value);
+      const allMarkers = [];
+
+      parsedQueries.forEach(q => {
+        const scaleDegrees = getScaleDegrees(q.note, q.scaleType);
+        const strings = q.strings || ['E', 'A', 'D', 'G', 'B', 'e'];
+        const startFret = q.fretRange?.start || 0;
+        const endFret = q.fretRange?.end || numOfFrets;
+
+        for (let i = 0; i < strings.length; i++) {
+          for (let j = startFret; j <= endFret; j++) {
+            const note = getNote(j, strings[i]);
+            const degree = scaleDegrees.find(d => d.note === note);
+            
+            if (degree && !q.excludedDegrees.includes(degree.degree)) {
+              allMarkers.push({
+                string: strings[i],
+                fret: j,
+                label: note,
+                color: degree.degree === 1 ? HIGHLIGHT_COLORS.ROOT : HIGHLIGHT_COLORS.NOTE
+              });
+            }
+          }
+        }
+      });
+
+      return allMarkers;
+    } catch (e) {
+      console.error('Error processing query:', e);
+      return [];
+    }
   });
 
+  // Run tests
+  testQueryParser();
+
   const app = [
-    h(Fretboard, {highlights}),
-    h(FretboardControls, {mode, note}),
+    h(Fretboard, {highlights: markers}),
+    h(QueryInput, {onQueryChange: (q) => query.value = q}),
   ];
   render(app, document.getElementById('guitar-app'));
 
