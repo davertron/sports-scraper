@@ -1,0 +1,81 @@
+---
+title: "davertron.com - Benchapp Import"
+url: "/benchapp-import.html"
+layout: "layout.vto"
+---
+
+<div class="container">
+    <h1>Benchapp Import</h1>
+
+    <img src="/static/vector_me_hockey.png" alt="Benchapp Import" class="avatar" />
+
+    <p>
+        This tool converts a Fullstride schedule to a Benchapp schedule.
+    </p>
+
+    <h2>Fullstride Schedule</h2>
+    <div style="text-align: center;">
+        <form id="fullstride-schedule-input">
+        <textarea id="fullstride-schedule-input-textarea" placeholder="Paste your Fullstride schedule here" rows="10" cols="100"></textarea>
+    </form>
+
+    <div style="text-align: center; margin: 10px;">
+        <button type="submit" id="convert-button">Convert</button>
+    </div>
+
+    <h2>Benchapp Schedule</h2>
+    <form id="benchapp-schedule">
+        <textarea id="benchapp-schedule-textarea" placeholder="Benchapp schedule will appear here" rows="10" cols="100" readonly></textarea>
+    </form>
+    <div style="text-align: center; margin: 10px;">
+        <button type="submit" id="download-button">Download</button>
+    </div>
+</div>
+
+<script>
+  const convertButton = document.getElementById('convert-button');
+  convertButton.addEventListener('click', convertFullstrideSchedule);
+  
+  // Sample input: 
+  // 6-May,Tue,UVM,9:00 PM,c v f
+  // 13-May,Tue,Leddy,10:05 PM,c v d
+  // 21-May,Wed,Leddy,8:45 PM,b v c
+  // 28-May,Wed,UVM,7:00 PM,c v e
+  // 1-Jun,Sun,UVM,6:00 PM,a v c
+  // 8-Jun,Sun,UVM,6:00 PM,c v f
+
+  // Sample output: 
+
+  // Type,Game Type,Title (Optional),Away,Home,Date,Time,Duration,Location (Optional),Address (Optional),Notes (Optional)
+  // GAME,REGULAR,,TBD,Ice Pack,5/6/2025,9:00 PM,1:00,UVM,,
+  // GAME,REGULAR,,TBD,Ice Pack,5/13/2025,10:05 PM,1:00,Leddy,,
+  // GAME,REGULAR,,TBD,Ice Pack,5/21/2025,8:45 PM,1:00,Leddy,,
+  // GAME,REGULAR,,TBD,Ice Pack,5/28/2025,7:00 PM,1:00,UVM,,
+  // GAME,REGULAR,,TBD,Ice Pack,6/1/2025,6:00 PM,1:00,UVM,,
+  // GAME,REGULAR,,TBD,Ice Pack,6/8/2025,6:00 PM,1:00,UVM,,
+  function convertFullstrideSchedule() {
+    const schedule = document.getElementById('fullstride-schedule-input-textarea').value;
+    const lines = schedule.split('\n');
+    const benchappSchedule = lines.map((line) => {
+      const [date, day, rink, time, _teams] = line.split(',');
+      // Parse the date, assume it's the current year
+      const dateObj = new Date(date);
+      const year = dateObj.getFullYear();
+      const month = dateObj.getMonth() + 1;
+      const dday = dateObj.getDate();
+      return `GAME,REGULAR,,TBD,Ice Pack,${month}/${dday}/${year},${time},1:00,${rink},,`;
+    });
+    benchappSchedule.unshift('Type,Game Type,Title (Optional),Away,Home,Date,Time,Duration,Location (Optional),Address (Optional),Notes (Optional)');
+    document.getElementById('benchapp-schedule-textarea').value = benchappSchedule.join('\n');
+  }
+    const downloadButton = document.getElementById('download-button');
+    downloadButton.addEventListener('click', downloadBenchappSchedule);
+
+    function downloadBenchappSchedule() {
+      const benchappSchedule = document.getElementById('benchapp-schedule-textarea').value;
+      const link = document.createElement('a');
+      link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(benchappSchedule);
+      link.download = 'benchapp-schedule.csv';
+      link.click();
+    }
+</script>
