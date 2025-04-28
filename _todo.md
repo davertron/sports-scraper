@@ -1,6 +1,7 @@
 # TODO List
 
 ## High Priority
+- [ ] @guitar: Update page layout to take up the whole screen, make sure fretboard is scalable and resizes with viewport
 - [ ] @hockey: Completely redesign hockey page
     - [ ] Get rid of separate "Next game" and "full schedule" sections
     - [ ] Make each game a cool card; add images for teams for ice pack and druckerman
