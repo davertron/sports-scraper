@@ -22,6 +22,18 @@ layout: "layout.vto"
 
 <script type="module">
   import { h, render } from 'https://esm.sh/preact';
+  import { signal, computed } from 'https://esm.sh/@preact/signals';
+
+
+  // https://coolors.co/palette/58b441-f65128-0d6191-ecf9f3-ffffff
+  const HIGHLIGHT_COLORS = {
+    ROOT: '#58b441',
+    NOTE: '#f65128',
+    LIGHT_NOTE: '#F88062',
+    BLUE: '#0d6191',
+    GREEN: '#ecf9f3',
+    WHITE: '#ffffff',
+  };
 
   function assert(condition, message) {
     if (!condition) {
@@ -30,6 +42,7 @@ layout: "layout.vto"
   }
 
   const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+
   function getNote(fret, string) {
     const startingNote = notes.indexOf(string.toUpperCase());
     return notes[(startingNote + fret) % notes.length];
@@ -40,6 +53,18 @@ layout: "layout.vto"
   assert(getNote(7, 'E') === 'B', 'getNote(7, "E") === "B"');
   assert(getNote(3, 'e') === 'G', 'getNote(3, "e") === "G"');
   assert(getNote(5, 'e') === 'A', 'getNote(5, "e") === "A"');
+
+  function getKey(note) {
+    const key = [];
+    const root = notes.indexOf(note.toUpperCase());
+    const intervals = [0, 2, 4, 5, 7, 9, 11]; // Distance from root; Jump with 2, 2, 1, 2, 2, 2, 1
+    for (let i = 0; i < intervals.length; i++) {
+      key.push(notes[(root + intervals[i]) % notes.length]);
+    }
+    return key;
+  }
+
+  assert(getKey('C').join(',') === 'C,D,E,F,G,A,B', 'Wrong notes for C major: ' + getKey('C').join(','));
 
   // This assumes starting on the E string
   // This will generate position 1 for now
@@ -97,9 +122,9 @@ layout: "layout.vto"
   }
 
   function Fretboard({highlights}) {
-    const highlightMarkers = highlights.map((m) => {
+    const highlightMarkers = highlights.value.map((m) => {
       const {string, fret, label} = m;
-      const x = fretPositions[fret - 1] - fretGap / 2;
+      const x = fret > 0 ? fretPositions[fret - 1] - fretGap / 2 : -nutWidth;
       const y = getStringY(string);
       return h('g', { transform: `translate(${x}, ${y})` }, [
         h('circle', { 
@@ -107,7 +132,7 @@ layout: "layout.vto"
           cx: 0,
           cy: 0,
           r: highlightMarkerRadius,
-          fill: 'red',
+          fill: m.color ?? HIGHLIGHT_COLORS.NOTE,
           stroke: 'black',
         }),
         h('text', {
@@ -155,15 +180,89 @@ layout: "layout.vto"
     );
   }
 
+  function FretboardControls({mode, note}) {
+    return h('div', null, [
+      h('label', null, 'Mode'),
+      h('select', {
+        onChange: (e) => {
+          mode.value = e.target.value;  
+        },
+      }, [
+        h('option', {value: 'key'}, 'Major Key'),
+        h('option', {value: 'pentatonic'}, 'A Minor Pentatonic'),
+      ]),
+      h('label', null, 'Note'),
+      h('select', {
+        onChange: (e) => {
+          note.value = e.target.value;
+        },
+      }, [
+        h('option', {value: 'C'}, 'C'),
+        h('option', {value: 'C#'}, 'C#'),
+        h('option', {value: 'D'}, 'D'),
+        h('option', {value: 'D#'}, 'D#'),
+        h('option', {value: 'E'}, 'E'),
+        h('option', {value: 'F'}, 'F'),
+        h('option', {value: 'F#'}, 'F#'),
+        h('option', {value: 'G'}, 'G'),
+        h('option', {value: 'G#'}, 'G#'),
+        h('option', {value: 'A'}, 'A'),
+        h('option', {value: 'A#'}, 'A#'),
+        h('option', {value: 'B'}, 'B'),
+      ]),
+      mode.value === 'key' && h('span', null, 'Notes in key: ' + getKey(note.value).join(', ')),
+    ]);
+  }
+
   // Create your app
-  {{# const testHighlight = { string: 'E', fret: 3, label: getNote(3, 'E') }; // Note: string param here: E is 6th string, e is first string #}}
   const aMinorPentatonicScale = generateMinorPentatonicScale(5); // Should be A minor pentatonic
   const aMinorPentatonicHighlights = aMinorPentatonicScale.map((m) => ({
     string: m.string,
     fret: m.fret,
     label: getNote(m.fret, m.string),
+  })).map((m) => ({
+    ...m,
+    isRoot: m.label === 'A',
+  })).map((m) => ({
+    ...m,
+    color: m.isRoot ? HIGHLIGHT_COLORS.ROOT : null,
   }));
-  const app = h(Fretboard, {highlights: aMinorPentatonicHighlights});
+
+  const mode = signal('key');
+  const note = signal('C');
+  const highlights = computed(() => {
+    if (mode.value === 'pentatonic') {
+      return aMinorPentatonicHighlights;
+    }
+
+    const strings = ['E', 'A', 'D', 'G', 'B', 'e'];
+    const key = getKey(note.value);
+    const highlights = [];
+    const getColor = (n) => {
+      if (n === note.value) {
+        return HIGHLIGHT_COLORS.ROOT;
+      } else if (key.indexOf(n) == 3 || key.indexOf(n) == 6) {
+        // The 4th and 7th notes of the scale are left out for pentatonic
+        return HIGHLIGHT_COLORS.LIGHT_NOTE;
+      }
+      return null;
+    };
+    for (let i = 0; i < strings.length; i++) {
+      for (let j = 0; j < numOfFrets; j++) {
+        const n = getNote(j, strings[i]);
+        if (key.includes(n)) {
+          highlights.push({string: strings[i], fret: j, label: n, color: getColor(n)});
+        }
+      }
+    }
+
+    return highlights;
+  });
+
+  const app = [
+    h(Fretboard, {highlights}),
+    h(FretboardControls, {mode, note}),
+  ];
   render(app, document.getElementById('guitar-app'));
 
 </script>
