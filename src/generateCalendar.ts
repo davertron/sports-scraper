@@ -1,7 +1,7 @@
 import { Game } from "./types.ts";
 import { uploadCalendarToS3 } from "./utils/s3.ts";
 
-function generateICS(games: Game[]): string {
+function generateICS(calendarName: string, games: Game[]): string {
   const now = new Date();
   const calendar = [
     "BEGIN:VCALENDAR",
@@ -9,7 +9,7 @@ function generateICS(games: Game[]): string {
     "PRODID:-//Hockey Schedule//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    "X-WR-CALNAME:Hockey Schedule",
+    `X-WR-CALNAME:${calendarName}`,
     "X-WR-TIMEZONE:America/New_York",
   ];
 
@@ -53,7 +53,7 @@ async function main() {
     const games = await response.json() as Game[];
     
     console.log(`Generating calendar for ${games.length} games...`);
-    const icsContent = generateICS(games);
+    const icsContent = generateICS("Hockey Schedule", games);
     
     // Use a stable filename for the calendar
     const key = "hockey-calendar/schedule.ics";
@@ -65,6 +65,32 @@ async function main() {
       console.log("Successfully uploaded new calendar to S3");
     } else {
       console.log("Calendar unchanged, no upload needed");
+    }
+
+    // Split the games into two calendars for sharing with 
+    // the ice pack and druckerman groups
+    const icePackGames = games.filter(game => game.team === "Ice Pack");
+    const druckermanGames = games.filter(game => game.team === "Druckerman");
+
+    const icePackCalendar = generateICS("Ice Pack Schedule", icePackGames);
+    const druckermanCalendar = generateICS("Druckerman Schedule", druckermanGames);
+
+    const icePackKey = "hockey-calendar/ice-pack-schedule.ics";
+    const druckermanKey = "hockey-calendar/druckerman-schedule.ics";
+
+    const icePackUploaded = await uploadCalendarToS3(icePackCalendar, icePackKey);
+    const druckermanUploaded = await uploadCalendarToS3(druckermanCalendar, druckermanKey); 
+    
+    if (icePackUploaded) {
+      console.log("Successfully uploaded new ice pack calendar to S3");
+    } else {
+      console.log("Ice pack calendar unchanged, no upload needed");
+    }
+    
+    if (druckermanUploaded) {
+      console.log("Successfully uploaded new druckerman calendar to S3");
+    } else {
+      console.log("Druckerman calendar unchanged, no upload needed");
     }
   } catch (error) {
     console.error("Error in calendar generation process:", error);
