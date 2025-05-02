@@ -3,6 +3,14 @@ import preact from '@preact/preset-vite';
 
 export default defineConfig({
   plugins: [preact()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+    },
+  },
   build: {
     outDir: '../_site/static/js',  // Output to Lume's _site directory
     emptyOutDir: true,

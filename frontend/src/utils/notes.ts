@@ -7,13 +7,15 @@ export function getNote(fret: number, string: string): string {
   return notes[(startingNote + fret) % notes.length];
 }
 
-export function getStringY(string: string): number {
+type String = 'E' | 'A' | 'D' | 'G' | 'B' | 'e';
+
+export function getStringY(string: String): number {
   return {
-    'E': 5 * stringGap - strokeWidth / 2,
-    'A': 4 * stringGap,
-    'D': 3 * stringGap,
-    'G': 2 * stringGap,
-    'B': stringGap,
-    'e': strokeWidth / 2,
+    E: 5 * stringGap - strokeWidth / 2,
+    A: 4 * stringGap,
+    D: 3 * stringGap,
+    G: 2 * stringGap,
+    B: stringGap,
+    e: strokeWidth / 2,
   }[string];
 } 
