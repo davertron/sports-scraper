@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
 import preact from '@preact/preset-vite';
+// This type import is needed to extend the configuration type to include test properties
+import type { ViteUserConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [preact()],
