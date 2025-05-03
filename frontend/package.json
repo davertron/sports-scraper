@@ -12,7 +12,11 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@nextjournal/lang-clojure": "^1.0.0",
     "@preact/signals": "^2.0.4",
+    "@replit/codemirror-vim": "^6.3.0",
+    "@uiw/codemirror-theme-quietlight": "^4.23.12",
+    "@uiw/react-codemirror": "^4.23.12",
     "preact": "^10.26.5"
   },
   "devDependencies": {

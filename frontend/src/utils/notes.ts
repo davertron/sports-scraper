@@ -1,21 +1,21 @@
 import { stringGap, strokeWidth } from '../constants';
 
-export const notes = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
-
-export function getNote(fret: number, string: string): string {
-  const startingNote = notes.indexOf(string.toUpperCase());
-  return notes[(startingNote + fret) % notes.length];
+export enum GuitarString {
+  E = 'E',
+  A = 'A',
+  D = 'D',
+  G = 'G',
+  B = 'B',
+  e = 'e'
 }
 
-type String = 'E' | 'A' | 'D' | 'G' | 'B' | 'e';
-
-export function getStringY(string: String): number {
+export function getStringY(string: GuitarString): number {
   return {
-    E: 5 * stringGap - strokeWidth / 2,
-    A: 4 * stringGap,
-    D: 3 * stringGap,
-    G: 2 * stringGap,
-    B: stringGap,
-    e: strokeWidth / 2,
+    [GuitarString.E]: 5 * stringGap - strokeWidth / 2,
+    [GuitarString.A]: 4 * stringGap,
+    [GuitarString.D]: 3 * stringGap,
+    [GuitarString.G]: 2 * stringGap,
+    [GuitarString.B]: stringGap,
+    [GuitarString.e]: strokeWidth / 2,
   }[string];
 } 

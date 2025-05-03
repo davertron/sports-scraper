@@ -1,20 +1,21 @@
 import { h } from 'preact';
 import { HIGHLIGHT_COLORS, d, margin, fretBoardWidth, fretBoardHeight, stringGap, nutWidth, numOfFrets, fretGap, strokeWidth, stringWidth, fretMarkerRadius, highlightMarkerRadius, highlightMarkerFontSize } from '../constants';
-import { getStringY } from '../utils/notes';
+import { getStringY, GuitarString } from '../utils/notes';
+import { ReadonlySignal } from '@preact/signals';
 
 interface Marker {
   string: string;
   fret: number;
   label: string;
-  color?: string;
+  color: string | null;
 }
 
 interface FretboardProps {
-  highlights?: { value: Marker[] };
+  highlights?: ReadonlySignal<Marker[]>;
 }
 
 export function Fretboard({ highlights }: FretboardProps) {
-  const fretPositions = [];
+  const fretPositions: number[] = [];
   for (let i = 1; i < numOfFrets; i++) {
     fretPositions.push(i * fretGap);
   }
@@ -26,7 +27,7 @@ export function Fretboard({ highlights }: FretboardProps) {
         ? fretBoardWidth - nutWidth - fretGap / 2 
         : fretPositions[fret - 1] - fretGap / 2) 
       : -nutWidth;
-    const y = getStringY(string);
+    const y = getStringY(string as GuitarString);
     
     return (
       <g transform={`translate(${x}, ${y})`}>
@@ -56,16 +57,15 @@ export function Fretboard({ highlights }: FretboardProps) {
 
   return (
     <svg width={d.w} height={d.h}>
-      <rect id="background" width={d.w} height={d.h} />
       <g id="fretboard" transform={`translate(${margin.left}, ${margin.top})`} width={d.w - margin.left - margin.right} height={d.h - margin.top - margin.bottom}>
         <rect id="nut" width={nutWidth} height={fretBoardHeight} fill="black" />
         <g id="strings-and-frets" transform={`translate(${nutWidth}, 0)`} stroke-width={strokeWidth} stroke="black">
-          <line id="high-e" x1={0} y1={getStringY('e')} x2={stringWidth} y2={getStringY('e')} />
-          <line id="b" x1={0} y1={getStringY('B')} x2={stringWidth} y2={getStringY('B')} />
-          <line id="g" x1={0} y1={getStringY('G')} x2={stringWidth} y2={getStringY('G')} />
-          <line id="d" x1={0} y1={getStringY('D')} x2={stringWidth} y2={getStringY('D')} />
-          <line id="a" x1={0} y1={getStringY('A')} x2={stringWidth} y2={getStringY('A')} />
-          <line id="low-e" x1={0} y1={getStringY('E')} x2={stringWidth} y2={getStringY('E')} />
+          <line id="high-e" x1={0} y1={getStringY(GuitarString.e)} x2={stringWidth} y2={getStringY(GuitarString.e)} />
+          <line id="b" x1={0} y1={getStringY(GuitarString.B)} x2={stringWidth} y2={getStringY(GuitarString.B)} />
+          <line id="g" x1={0} y1={getStringY(GuitarString.G)} x2={stringWidth} y2={getStringY(GuitarString.G)} />
+          <line id="d" x1={0} y1={getStringY(GuitarString.D)} x2={stringWidth} y2={getStringY(GuitarString.D)} />
+          <line id="a" x1={0} y1={getStringY(GuitarString.A)} x2={stringWidth} y2={getStringY(GuitarString.A)} />
+          <line id="low-e" x1={0} y1={getStringY(GuitarString.E)} x2={stringWidth} y2={getStringY(GuitarString.E)} />
           {fretPositions.map((x, i) => (
             <line id={`fret-${i + 1}`} x1={x} y1={0} x2={x} y2={fretBoardHeight} />
           ))}

@@ -7,7 +7,7 @@ export const HIGHLIGHT_COLORS = {
   WHITE: '#ffffff',
 };
 
-export const d = {w: 1100, h: 250};
+export const d = {w: 1200, h: 250};
 export const margin = {top: 40, bottom: 40, left: 40, right: 40};
 export const fretBoardWidth = d.w - margin.left - margin.right;
 export const fretBoardHeight = d.h - margin.top - margin.bottom;

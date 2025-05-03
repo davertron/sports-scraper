@@ -1,23 +1,30 @@
 ---
 title: "davertron.com - Guitar"
 url: "/guitar/index.html"
-layout: "layout.vto"
 ---
 
 <style>
-  #guitar-app {
-    svg {
-      #background {
-        fill: transparent;
-      }
-    }
-  }
-  /* Used for debugging */
-  img {
-    display: none;
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
   }
 </style>
 
+<h1>Guitar Thingy</h1>
+
 <div id="guitar-app"></div>
-<img src="/static/guitar_guide.png" />
 <script type="module" src="/static/js/guitar.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/scittle@0.6.22/dist/scittle.js" type="application/javascript"></script>
+<script type="application/x-scittle" src="/static/guitar.cljs"></script>
+
+<script>
+  // Just leaving this here in case I need to call a function 
+  // on load.
+  //document.addEventListener('guitar-clj-loaded', () => {
+  //  const result = scittle.core.eval_string(`(clj->js (guitar.get-key "C"))`);
+  //  console.log("result: ", result);
+  //});
+</script>

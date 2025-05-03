@@ -1,148 +1,57 @@
-import { useState } from 'preact/hooks';
+import { useState, useEffect } from 'preact/hooks';
+import { Note } from '../main';
+import CodeMirror, { basicSetup } from '@uiw/react-codemirror';
+import { clojure } from '@nextjournal/lang-clojure';
+import { vim } from "@replit/codemirror-vim"
+
+declare const scittle: any;
 
 interface QueryInputProps {
-  onQueryChange: (query: string) => void;
+  initialQuery?: string;
+  onQueryChange: (notes: Note[]) => void;
 }
 
-export function QueryInput({ onQueryChange }: QueryInputProps) {
-  const [queryText, setQueryText] = useState('');
+export function QueryInput({ initialQuery, onQueryChange }: QueryInputProps) {
+  const [queryText, setQueryText] = useState(initialQuery || '');
   const [error, setError] = useState('');
-
-  const exampleQueries = [
-    'show c major',
-    'show c major without 4th and 7th',
-    'show c major between frets 5-8',
-    'show c major on strings E and A',
-    'show c major without 4th and 7th between frets 5-8 on strings E and A'
-  ];
 
   const handleSubmit = () => {
     try {
-      onQueryChange(queryText);
+      const wrappedQueryText = `(->> notes ${queryText} (clj->js))`;
+      const result = scittle.core.eval_string(wrappedQueryText);
+      onQueryChange(result);
       setError('');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An unknown error occurred');
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.shiftKey && event.key === 'Enter') {
+        event.preventDefault();
+        event.stopPropagation();
+        handleSubmit();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [queryText]); // Re-run effect when queryText changes
+  
   return (
-    <div style="margin-bottom: 20px">
-      <div style="margin-bottom: 10px">
-        <label style="display: block; margin-bottom: 5px">Query</label>
-        <div style="display: flex; gap: 10px">
-          <input
-            type="text"
-            value={queryText}
-            placeholder="show c major without 4th and 7th between frets 5-8 on strings E and A"
-            style="width: 600px; padding: 8px; font-size: 16px"
-            onInput={(e) => {
-              setQueryText(e.currentTarget.value);
-              setError('');
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSubmit();
-              }
-            }}
-          />
-          <button
-            style="padding: 8px 16px; font-size: 16px"
-            onClick={handleSubmit}
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-      {error && <div style="color: red; margin-bottom: 10px">{error}</div>}
-      <div style="margin-top: 20px">
-        <div style="margin-bottom: 5px">Example queries:</div>
-        <div style="display: flex; flex-direction: column; gap: 5px">
-          {exampleQueries.map(q => (
-            <button
-              key={q}
-              style="text-align: left; padding: 5px; background: none; border: none; color: blue; cursor: pointer"
-              onClick={() => {
-                setQueryText(q);
-                setError('');
-              }}
-            >
-              {q}
-            </button>
-          ))}
-        </div>
-      </div>
+    <div>
+      <CodeMirror 
+           value={queryText} 
+           height="200px" 
+           extensions={[vim(), basicSetup(), clojure()]} 
+           onChange={val => setQueryText(val)}  
+           width="1200px"
+      />
+      <br/>
+      <button onClick={handleSubmit}>Submit</button>
     </div>
   );
-} 
-
-export function QueryInputExperimental({ onQueryChange }: QueryInputProps) {
-  const [queryText, setQueryText] = useState('');
-  const [error, setError] = useState('');
-
-  const exampleQueries = [
-    'notes | keyOf C',
-    'notes | keyOf C | onFrets 5,6,7,8',
-    'notes | keyOf C | onFrets 5,6,7,8 | not isScaleDegree C 4,7',
-    'notes | keyOf C | onFrets 5-8 | onStrings E,A',
-    'notes | keyOf C | onFrets 5-8 | onStrings G,B,e',
-    'notes | keyOf C | color C,green'
-  ];
-
-  const handleSubmit = () => {
-    try {
-      onQueryChange(queryText);
-      setError('');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'An unknown error occurred');
-    }
-  };
-
-  return (
-    <div style="margin-bottom: 20px">
-      <div style="margin-bottom: 10px">
-        <label style="display: block; margin-bottom: 5px">Query</label>
-        <div style="display: flex; gap: 10px">
-          <input
-            type="text"
-            value={queryText}
-            placeholder="notes | keyOf C | onFrets 5,6,7,8 | onStrings E,A"
-            style="width: 600px; padding: 8px; font-size: 16px"
-            onInput={(e) => {
-              setQueryText(e.currentTarget.value);
-              setError('');
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleSubmit();
-              }
-            }}
-          />
-          <button
-            style="padding: 8px 16px; font-size: 16px"
-            onClick={handleSubmit}
-          >
-            Submit
-          </button>
-        </div>
-      </div>
-      {error && <div style="color: red; margin-bottom: 10px">{error}</div>}
-      <div style="margin-top: 20px">
-        <div style="margin-bottom: 5px">Example queries:</div>
-        <div style="display: flex; flex-direction: column; gap: 5px">
-          {exampleQueries.map(q => (
-            <button
-              key={q}
-              style="text-align: left; padding: 5px; background: none; border: none; color: blue; cursor: pointer"
-              onClick={() => {
-                setQueryText(q);
-                setError('');
-              }}
-            >
-              {q}
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-} 
+}
