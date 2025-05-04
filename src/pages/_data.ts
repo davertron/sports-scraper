@@ -9,6 +9,8 @@ export const nextDruckermanGame = games.find(game => game.team === "Druckerman" 
 
 export const nextIcePackGameFormatted = formatIcePackGame(nextIcePackGame);
 export const nextDruckermanGameFormatted = formatDruckermanGame(nextDruckermanGame);
+export const nextBigFatNerdsGame = games.find(game => game.team === "Big Fat Nerds" && game.eventStartTime > Date.now());
+export const nextBigFatNerdsGameFormatted = formatIcePackGame(nextBigFatNerdsGame);
 
 function convertToTableRow(game: Game): {
   isPastGame: boolean;

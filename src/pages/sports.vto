@@ -1,10 +1,10 @@
 ---
 layout: layout.vto
-title: Hockey Schedule
+title: Sports Schedule
 url: /sports/index.html
 ---
 
-<h1>Hockey Schedule</h1>
+<h1>Sports Schedule</h1>
 
 {{ if nextIcePackGame }}
     <p>Next Ice Pack Game: {{ nextIcePackGameFormatted }}</p>
@@ -16,6 +16,12 @@ url: /sports/index.html
     <p>Next Druckerman Game: {{ nextDruckermanGameFormatted }}</p>
 {{ else }}
     <p>Next Druckerman Game: None</p>
+{{ /if }}
+
+{{ if nextBigFatNerdsGame }}
+    <p>Next Big Fat Nerds Game: {{ nextBigFatNerdsGameFormatted }}</p>
+{{ else }}
+    <p>Next Big Fat Nerds Game: None</p>
 {{ /if }}
 
 <div class="header-container">
