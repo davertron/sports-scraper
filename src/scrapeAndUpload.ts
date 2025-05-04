@@ -2,19 +2,22 @@ import { scrapeDruckermanGames } from "./utils/scrapeDruckermanGames.ts";
 import { scrapeIcePackGames } from "./utils/scrapeIcePackGames.ts";
 import { uploadToS3 } from "./utils/s3.ts";
 import { createHash } from "node:crypto";
-
+import { scrapeBigFatNerdsGames } from "./utils/scrapeBigFatNerdsGames.ts";
 async function main() {
   try {
     console.log("Starting hockey data scrape...");
-    const [dGames, iGames] = await Promise.all([
+    const [dGames, iGames, bfngGames] = await Promise.all([
       scrapeDruckermanGames(),
-      scrapeIcePackGames()
+      scrapeIcePackGames(),
+      scrapeBigFatNerdsGames(),
     ]);
-    const games = [...dGames, ...iGames];
+    const games = [...dGames, ...iGames, ...bfngGames];
     console.log(`Successfully scraped ${games.length} games`);
 
     const dataString = JSON.stringify(games);
     const hash = createHash("sha256").update(dataString).digest("hex");
+    // TODO: Might be good to put this somewhere else since they aren't all
+    // hockey games...
     const key = `hockey-games/${hash}.json`;
     
     const uploaded = await uploadToS3(games, key);
