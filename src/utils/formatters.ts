@@ -1,3 +1,4 @@
+import { DateTime } from "https://esm.sh/luxon@3.6.1";
 import { Game } from "../types.ts";
 
 export function formatTime(date: Date): string {
@@ -43,4 +44,12 @@ export function formatGameTime(game: Game): string {
   return game.team === "Ice Pack" 
     ? formatIcePackTime(game.eventStartTime)
     : formatDateRange(game.eventStartTime, game.eventEndTime);
+}
+
+// Parse date from "2025-04-11T06:40:00" using luxon.DateTime
+export function toUTCMillis(dateString: string) {
+  const dt = DateTime.fromISO(dateString, {
+    zone: "America/New_York", // interpret input as being in this zone
+  });
+  return dt.toMillis();
 }

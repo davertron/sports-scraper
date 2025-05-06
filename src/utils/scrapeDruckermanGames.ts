@@ -1,13 +1,5 @@
-import { DateTime } from "https://esm.sh/luxon@3.6.1";
 import { CairnsGame, Game } from "../types.ts";
-
-// Parse date from "2025-04-11T06:40:00" using luxon.DateTime
-function toUTCMillis(dateString: string) {
-  const dt = DateTime.fromISO(dateString, {
-    zone: "America/New_York", // interpret input as being in this zone
-  });
-  return dt.toMillis();
-}
+import { toUTCMillis } from "./formatters.ts";
 
 export async function scrapeDruckermanGames(): Promise<Game[]> {
   const response = await fetch("https://cairnsarena.finnlyconnect.com/schedule/460");

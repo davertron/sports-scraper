@@ -1,3 +1,5 @@
+import { toUTCMillis } from "./formatters.ts";
+
 // Hard code data from the CSV for now, which can be found here:
 // https://docs.google.com/spreadsheets/d/1JkeOGc9uHVgrP399IL-4oQEOZk-SPX9Fs-Iq_fNj0Z0/edit?gid=0#gid=0
 // Eventually scrape from the website
@@ -23,7 +25,7 @@ const games = tsvGames.split('\n')
     .filter(line => line.trim() !== '')
     .map(line => {
         const [date, time, homeTeam, awayTeam, field] = line.split('\t');
-        const eventStartTime = new Date(`${date} ${time}`).getTime();
+        const eventStartTime = toUTCMillis(`${date} ${time}`);
         const eventEndTime = eventStartTime + 60 * 60 * 1000;
 
         return { 
