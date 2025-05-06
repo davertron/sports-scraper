@@ -25,7 +25,7 @@ const games = tsvGames.split('\n')
     .filter(line => line.trim() !== '')
     .map(line => {
         const [date, time, homeTeam, awayTeam, field] = line.split('\t');
-        const eventStartTime = toUTCMillis(`${date} ${time}`);
+        const eventStartTime = toUTCMillis(new Date(`${date} ${time}`).toISOString());
         const eventEndTime = eventStartTime + 60 * 60 * 1000;
 
         return { 

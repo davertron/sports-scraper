@@ -3,6 +3,11 @@ import { expect } from "jsr:@std/expect";
 
 Deno.test('scrapeBigFatNerdsGames should return the correct number of games', async () => {
     const games = await scrapeBigFatNerdsGames();
-    console.log(games);
     expect(games.length).toBe(13);
 });
+
+Deno.test('scrapeBigFatNerdsGames should have properly formatted dates', async () => {
+    const games = await scrapeBigFatNerdsGames();
+    expect(new Date(games[0].eventStartTime).toISOString()).toBe("2025-05-07T22:00:00.000Z");
+});
+
