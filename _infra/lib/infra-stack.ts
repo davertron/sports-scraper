@@ -1,11 +1,11 @@
-import { Stack, StackProps, RemovalPolicy } from '../$node_modules/aws-cdk-lib/index.js';
-import { Construct } from '../$node_modules/constructs/lib/index.js';
-import * as s3 from '../$node_modules/aws-cdk-lib/aws-s3/index.js';
-import * as cloudfront from '../$node_modules/aws-cdk-lib/aws-cloudfront/index.js';
-import * as origins from '../$node_modules/aws-cdk-lib/aws-cloudfront-origins/index.js';
-import * as certificatemanager from '../$node_modules/aws-cdk-lib/aws-certificatemanager/index.js';
-import * as route53 from '../$node_modules/aws-cdk-lib/aws-route53/index.js';
-import * as targets from '../$node_modules/aws-cdk-lib/aws-route53-targets/index.js';
+import { Stack, StackProps, RemovalPolicy } from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as certificatemanager from 'aws-cdk-lib/aws-certificatemanager';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as targets from 'aws-cdk-lib/aws-route53-targets';
 
 export class InfraStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
