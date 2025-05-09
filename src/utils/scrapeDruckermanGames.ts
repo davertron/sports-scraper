@@ -1,7 +1,7 @@
 import { CairnsGame, Game } from "../types.ts";
 import { toUTCMillis } from "./formatters.ts";
 
-export async function scrapeDruckermanGames(): Promise<Game[]> {
+export async function scrapeDruckermanGames({raw}: {raw?: boolean} = {}): Promise<Game[] | CairnsGame[]> {
   const response = await fetch("https://cairnsarena.finnlyconnect.com/schedule/460");
   const html = await response.text();
 
@@ -12,6 +12,12 @@ export async function scrapeDruckermanGames(): Promise<Game[]> {
   }
 
   const allGames: CairnsGame[] = JSON.parse(allGamesString[1]);
+
+  if (raw) {
+    return allGames
+      .filter(game => game.AccountName === "Druckerman");
+  }
+
   const druckermanGames = allGames
     .filter(game => game.AccountName === "Druckerman")
     .map((game: CairnsGame) => ({
