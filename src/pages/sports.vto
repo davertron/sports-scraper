@@ -4,25 +4,120 @@ title: Sports Schedule
 url: /sports/index.html
 ---
 
+<style>
+  :root {
+    --ice-pack-color: #3185FC;
+    --druckerman-color: #EE964B;
+    --big-fat-nerds-color: #EFBCD5;
+  }
+
+  .day-names {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+  }
+
+  .day-names div {
+      width: 14.285714285714286%;
+      text-align: center;
+      border: 1px solid #ccc;
+  }
+
+  .week-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      height: 100px;
+      overflow: hidden;
+  }
+
+  .day-container {
+      width: 14.285714285714286%;
+      text-align: center;
+      border: 1px solid #ccc;
+  }
+
+  .day-date {
+    font-size: 12px;
+    color: #666;
+    text-align: right;
+    padding-right: 10px;
+  }
+
+  .today {
+    border: 1px solid #ccc;
+  }
+
+  .game-container {
+    font-size: 12px;
+
+    &.ice-pack {
+      background-color: var(--ice-pack-color);
+      color: white;
+    }
+
+    &.druckerman {
+      background-color: var(--druckerman-color);
+    }
+
+    &.big-fat-nerds {
+      background-color: var(--big-fat-nerds-color);
+    }
+  }
+
+  .past-day {
+    background-color: #eee;
+  }
+
+  .calendar-past-game {
+    filter: brightness(0.75);
+  }
+
+  tr.ice-pack td:first-child {
+    border-left: 4px solid var(--ice-pack-color);
+  }
+
+  tr.druckerman td:first-child {
+    border-left: 4px solid var(--druckerman-color);
+  }
+
+  tr.big-fat-nerds td:first-child {
+    border-left: 4px solid var(--big-fat-nerds-color);
+  }
+
+  thead tr {
+    border-left: 4px solid #f8f9fa;
+  }
+</style>
+
 <h1>Sports Schedule</h1>
 
-{{ if nextIcePackGame }}
-    <p>Next Ice Pack Game: {{ nextIcePackGameFormatted }}</p>
-{{ else }}
-    <p>Next Ice Pack Game: None</p>
-{{ /if }}
+<h2>Next Three Weeks</h2>
+<div class="calendar-container">
+<div class="day-names">
+    <div>Sun</div>
+    <div>Mon</div>
+    <div>Tue</div>
+    <div>Wed</div>
+    <div>Thu</div>
+    <div>Fri</div>
+    <div>Sat</div>
+</div>
 
-{{ if nextDruckermanGame }}
-    <p>Next Druckerman Game: {{ nextDruckermanGameFormatted }}</p>
-{{ else }}
-    <p>Next Druckerman Game: None</p>
-{{ /if }}
-
-{{ if nextBigFatNerdsGame }}
-    <p>Next Big Fat Nerds Game: {{ nextBigFatNerdsGameFormatted }}</p>
-{{ else }}
-    <p>Next Big Fat Nerds Game: None</p>
-{{ /if }}
+{{ for week of nextThreeWeeks }}
+    <div class="week-container">
+        {{ for day of week }}
+            <div class="day-container {{ day.isToday ? 'today' : '' }} {{ day.isPast ? 'past-day' : '' }}">
+                <div class="day-date">{{ day.date.toLocaleDateString('en-US', { day: 'numeric' }) }}</div>
+                {{ for game of day.games }}
+                    <div class="game-container {{ game.team.replaceAll(" ", "-").toLowerCase() }} {{ day.isPast ? 'calendar-past-game' : '' }}" title="{{ game.rink }}">
+                        {{ game.time }} - {{ game.team }}
+                    </div>
+                {{ /for }}
+            </div>
+        {{ /for }}
+    </div>
+{{ /for }}
 
 <div class="header-container">
   <h2>Full Schedule</h2>
@@ -31,17 +126,19 @@ url: /sports/index.html
 <table id="scheduleTable" class="hide-past-games">
   <thead>
     <tr>
+      <th>Day</th>
+      <th>Time</th>
       <th>Team</th>
-      <th>Date & Time</th>
       <th>Rink</th>
       <th>Score</th>
     </tr>
   </thead>
   <tbody>
     {{ for row of tableRows }}
-        <tr class="{{ row.isPastGame ? 'past-game' : '' }}">
+        <tr class="{{ row.isPastGame ? 'past-game' : '' }} {{ row.team.replaceAll(/\s/g, '-').toLowerCase() }}">
+            <td>{{ row.day }}</td>
+            <td>{{ row.time }}</td>
             <td>{{ row.teamDisplay }}</td>
-            <td>{{ row.gameTime }}</td>
             <td>{{ row.rink }}</td>
             <td>{{ row.score }}</td>
         </tr>

@@ -1,16 +1,46 @@
 import { Game } from "../types.ts";
-import { formatIcePackGame, formatDruckermanGame, formatGameTime } from "../utils/formatters.ts";
+import { formatGameTime, formatTime } from "../utils/formatters.ts";
+import { format, startOfWeek, addDays, isToday, isSameDay, isBefore, startOfDay } from "https://esm.sh/date-fns";
 
 const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
 const games = await response.json() as Game[];
 
-export const nextIcePackGame = games.find(game => game.team === "Ice Pack" && game.eventStartTime > Date.now());
-export const nextDruckermanGame = games.find(game => game.team === "Druckerman" && game.eventStartTime > Date.now());
+// Let's generate a calendar view for this week and the following two weeks
+// Each week starts on Sunday and ends on Saturday
+const today = new Date();
+const startOfWeekDate = startOfWeek(today, { weekStartsOn: 0 }); // 0 = Sunday
 
-export const nextIcePackGameFormatted = formatIcePackGame(nextIcePackGame);
-export const nextDruckermanGameFormatted = formatDruckermanGame(nextDruckermanGame);
-export const nextBigFatNerdsGame = games.find(game => game.team === "Big Fat Nerds" && game.eventStartTime > Date.now());
-export const nextBigFatNerdsGameFormatted = formatIcePackGame(nextBigFatNerdsGame);
+type Day = {
+  date: Date;
+  isToday: boolean;
+  isPast: boolean;
+  games: Game[];
+}
+
+export const nextThreeWeeks: Day[][] = [];
+let currentWeek: Day[] = []
+
+for (let i = 0; i < 21; i++) { // 3 weeks * 7 days = 21
+  const currentDay = addDays(startOfWeekDate, i);
+  currentWeek.push({ 
+    date: currentDay, 
+    isToday: isToday(currentDay),
+    isPast: isBefore(startOfDay(currentDay), startOfDay(today)),
+    games: games.filter(game => {
+      const gameDate = new Date(game.eventStartTime);
+      return isSameDay(gameDate, currentDay);
+    })
+    .sort((a, b) => a.eventStartTime - b.eventStartTime)
+    .map(game => ({
+      ...game,
+      time: formatTime(new Date(game.eventStartTime))
+    }))
+  });
+  if (currentWeek.length === 7) {
+    nextThreeWeeks.push(currentWeek);
+    currentWeek = [];
+  }
+}
 
 function convertToTableRow(game: Game): {
   isPastGame: boolean;
@@ -18,13 +48,19 @@ function convertToTableRow(game: Game): {
   gameTime: string;
   rink: string;
   score: string;
+  team: string;
+  day: string;
+  time: string;
 } {
   const teamDisplay = game.team === "Ice Pack" ? `${game.team} vs. ${game.opponent}` : game.team;
   const isPastGame = game.eventStartTime < Date.now();
   return {
     isPastGame,
     teamDisplay,
+    team: game.team,
     gameTime: formatGameTime(game),
+    day: format(game.eventStartTime, 'M/d (EEE)'),
+    time: format(game.eventStartTime, 'h:mm a'),
     rink: game.rink,
     score: game.score || '-',
   };
