@@ -16,6 +16,7 @@ async function main() {
 
     const dataString = JSON.stringify(games);
     const hash = createHash("sha256").update(dataString).digest("hex");
+    console.log(`Calculated hash: ${hash}`);
     // TODO: Might be good to put this somewhere else since they aren't all
     // hockey games...
     const key = `hockey-games/${hash}.json`;
