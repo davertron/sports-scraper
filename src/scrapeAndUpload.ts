@@ -1,8 +1,9 @@
 import { scrapeDruckermanGames } from "./utils/scrapeDruckermanGames.ts";
 import { scrapeIcePackGames } from "./utils/scrapeIcePackGames.ts";
 import { uploadToS3 } from "./utils/s3.ts";
-import { createHash } from "node:crypto";
 import { scrapeBigFatNerdsGames } from "./utils/scrapeBigFatNerdsGames.ts";
+import { encodeHex } from "jsr:@std/encoding/hex";
+
 async function main() {
   try {
     console.log("Starting hockey data scrape...");
@@ -15,7 +16,9 @@ async function main() {
     console.log(`Successfully scraped ${games.length} games`);
 
     const dataString = JSON.stringify(games);
-    const hash = createHash("sha256").update(dataString).digest("hex");
+    const messageBuffer = new TextEncoder().encode(dataString);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", messageBuffer);
+    const hash = encodeHex(hashBuffer);
     console.log(`Calculated hash: ${hash}`);
     // TODO: Might be good to put this somewhere else since they aren't all
     // hockey games...
