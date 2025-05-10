@@ -1,57 +1,104 @@
-import { useState, useEffect } from 'preact/hooks';
-import { Note } from '../main';
-import CodeMirror, { basicSetup } from '@uiw/react-codemirror';
-import { clojure } from '@nextjournal/lang-clojure';
-import { vim } from "@replit/codemirror-vim"
-
-declare const scittle: any;
+import { Transform } from '../utils/transforms';
+import { Signal } from '@preact/signals';
 
 interface QueryInputProps {
-  initialQuery?: string;
-  onQueryChange: (notes: Note[]) => void;
+  transforms: Signal<Transform[]>;
 }
 
-export function QueryInput({ initialQuery, onQueryChange }: QueryInputProps) {
-  const [queryText, setQueryText] = useState(initialQuery || '');
-  const [error, setError] = useState('');
+export function QueryInput({ transforms }: QueryInputProps) {
 
-  const handleSubmit = () => {
-    try {
-      const wrappedQueryText = `(->> notes ${queryText} (clj->js))`;
-      const result = scittle.core.eval_string(wrappedQueryText);
-      onQueryChange(result);
-      setError('');
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'An unknown error occurred');
+  function updateKeyOfTransform(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[1] = value;
+    transforms.value = newTransforms;
+  }
+
+  function removeTransform(transformIndex: number) {
+    const newTransforms = [...transforms.value];
+    newTransforms.splice(transformIndex, 1);
+    transforms.value = newTransforms;
+  }
+
+  function addTransform() {
+    const newTransforms = [...transforms.value];
+    newTransforms.push({ type: 'filter', args: ['key-of', 'C'] });
+    transforms.value = newTransforms;
+  }
+
+  function updateFilter(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[0] = value;
+
+    if (value === 'between-frets') {
+      newTransforms[transformIndex].args[1] = '5-8';
+    } else if (value === 'on-strings') {
+      newTransforms[transformIndex].args[1] = 'E,A,e';
+    } else if (value === 'key-of') {
+      newTransforms[transformIndex].args[1] = 'C';
     }
-  };
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.shiftKey && event.key === 'Enter') {
-        event.preventDefault();
-        event.stopPropagation();
-        handleSubmit();
-      }
-    };
+    transforms.value = newTransforms;
+  }
 
-    window.addEventListener('keydown', handleKeyDown, true);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown, true);
-    };
-  }, [queryText]); // Re-run effect when queryText changes
-  
+  // TODO: These two functions aren't working for some reason
+  function updateBetweenFrets(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[1] = value;
+    transforms.value = newTransforms;
+  }
+
+  function updateOnStrings(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[1] = value;
+    transforms.value = newTransforms;
+  }
+
   return (
     <div>
-      <CodeMirror 
-           value={queryText} 
-           height="200px" 
-           extensions={[vim(), basicSetup(), clojure()]} 
-           onChange={val => setQueryText(val)}  
-           width="1200px"
-      />
-      <br/>
-      <button onClick={handleSubmit}>Submit</button>
+      {transforms.value.map((t, transformIndex) => (
+        <div>
+          <select value={t.type}>
+            <option value="filter">Filter</option>
+            <option value="map">Map</option>
+          </select>
+          {t.type === 'filter' && (
+            <select value={t.args[0]} onChange={e => updateFilter(transformIndex, (e.target as HTMLSelectElement).value)}>
+              <option value="key-of">Key of</option>
+              <option value="between-frets">Between frets</option>
+              <option value="on-strings">On strings</option>
+            </select>
+            
+          )}
+          {t.type === 'filter' && t.args[0] === 'key-of' && (
+              <select value={t.args[1]} onChange={e => updateKeyOfTransform(transformIndex, (e.target as HTMLSelectElement).value)}>
+                <option value="C">C</option>
+                <option value="C#">C#</option>
+                <option value="D">D</option>
+                <option value="D#">D#</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="F#">F#</option>
+                <option value="G">G</option>
+                <option value="G#">G#</option>
+                <option value="A">A</option>
+                <option value="A#">A#</option>
+                <option value="B">B</option>
+              </select>
+          )}
+          {t.type === 'filter' && t.args[0] === 'between-frets' && (
+            <>
+              <input type="text" value={t.args[1]} onChange={e => updateBetweenFrets(transformIndex, (e.target as HTMLInputElement).value)} />
+            </>
+          )}
+          {t.type === 'filter' && t.args[0] === 'on-strings' && (
+            <>
+              <input type="text" value={t.args[1]} onChange={e => updateOnStrings(transformIndex, (e.target as HTMLInputElement).value)} />
+            </>
+          )}
+          <button onClick={() => removeTransform(transformIndex)}>Remove</button>
+        </div>
+      ))}
+      <button onClick={() => addTransform()}>Add</button>
     </div>
   );
 }
