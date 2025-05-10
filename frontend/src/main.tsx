@@ -2,27 +2,22 @@ import { render } from 'preact';
 import { signal, computed, Signal } from '@preact/signals';
 import { Fretboard } from './components/Fretboard';
 import { QueryInput } from './components/QueryInput';
+import { generateNotes } from './utils/notes';
+import { applyTransforms, Transform } from './utils/transforms';
 
 console.log('Guitar app starting...');
 
-export type Note = {
-  note: string;
-  fret: number;
-  string: string;
-  color: string | null;
-};
-
 // Main app logic
-const query = signal(`(filter (is-in-key "C"))
-(filter (is-between-frets 5 8))
-;(filter (is-on-strings ["E" "A" "e"]))
-(map (color-notes ["C"] "teal"))
-`);
-const queryResults: Signal<Note[]> = signal([]);
+const transforms = signal<Transform[]>([
+  {type: 'filter', args: ['key-of', 'C']}, 
+  {type: 'filter', args: ['between-frets', '5-8']}, 
+  // {type: 'filter', args: ['on-strings', ['E', 'A', 'e']]}, 
+  // {type: 'map', args: ['color-notes', ['C'], 'teal']}
+]);
 let markers = computed(() => {
   try {
-    if (!queryResults.value) return [];
-    const allMarkers = queryResults.value.map(n => ({
+    const notes = generateNotes(16);
+    const allMarkers = applyTransforms(notes, transforms.value).map(n => ({
       note: n.note,
       fret: n.fret,
       string: n.string,
@@ -39,7 +34,7 @@ let markers = computed(() => {
 const app = (
   <>
     <Fretboard highlights={markers} />
-    <QueryInput initialQuery={query.value} onQueryChange={(r) => queryResults.value = r} />
+    <QueryInput transforms={transforms} />
   </>
 );
 
