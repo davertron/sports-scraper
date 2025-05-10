@@ -1,6 +1,7 @@
 import { Game } from "../types.ts";
 import { formatGameTime, formatTime } from "../utils/formatters.ts";
-import { format, startOfWeek, addDays, isToday, isSameDay, isBefore, startOfDay } from "https://esm.sh/date-fns";
+import { startOfWeek, addDays, isToday, isSameDay, isBefore, startOfDay } from "https://esm.sh/date-fns";
+import { formatInTimeZone } from "https://esm.sh/date-fns-tz";
 
 const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
 const games = await response.json() as Game[];
@@ -59,8 +60,8 @@ function convertToTableRow(game: Game): {
     teamDisplay,
     team: game.team,
     gameTime: formatGameTime(game),
-    day: format(game.eventStartTime, 'M/d (EEE)'),
-    time: format(game.eventStartTime, 'h:mm a'),
+    day: formatInTimeZone(game.eventStartTime, 'America/New_York', 'M/d (EEE)'),
+    time: formatInTimeZone(game.eventStartTime, 'America/New_York', 'h:mm a'),
     rink: game.rink,
     score: game.score || '-',
   };
