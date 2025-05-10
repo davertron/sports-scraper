@@ -1,14 +1,14 @@
 import { Game } from "../types.ts";
 import { formatGameTime, formatTime } from "../utils/formatters.ts";
 import { startOfWeek, addDays, isToday, isSameDay, isBefore, startOfDay } from "https://esm.sh/date-fns";
-import { formatInTimeZone } from "https://esm.sh/date-fns-tz";
+import { formatInTimeZone, toZonedTime } from "https://esm.sh/date-fns-tz";
 
 const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
 const games = await response.json() as Game[];
 
 // Let's generate a calendar view for this week and the following two weeks
 // Each week starts on Sunday and ends on Saturday
-const today = new Date();
+const today = toZonedTime(new Date(), "America/New_York");;
 const startOfWeekDate = startOfWeek(today, { weekStartsOn: 0 }); // 0 = Sunday
 
 type Day = {
@@ -28,13 +28,13 @@ for (let i = 0; i < 21; i++) { // 3 weeks * 7 days = 21
     isToday: isToday(currentDay),
     isPast: isBefore(startOfDay(currentDay), startOfDay(today)),
     games: games.filter(game => {
-      const gameDate = new Date(game.eventStartTime);
+      const gameDate = toZonedTime(new Date(game.eventStartTime), "America/New_York");
       return isSameDay(gameDate, currentDay);
     })
     .sort((a, b) => a.eventStartTime - b.eventStartTime)
     .map(game => ({
       ...game,
-      time: formatTime(new Date(game.eventStartTime))
+      time: formatInTimeZone(game.eventStartTime, 'America/New_York', 'h:mm a')
     }))
   });
   if (currentWeek.length === 7) {
