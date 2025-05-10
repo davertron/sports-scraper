@@ -1,5 +1,5 @@
 import { Game } from "../types.ts";
-import { formatGameTime, formatTime } from "../utils/formatters.ts";
+import { formatGameTime } from "../utils/formatters.ts";
 import { startOfWeek, addDays, isToday, isSameDay, isBefore, startOfDay } from "https://esm.sh/date-fns";
 import { formatInTimeZone, toZonedTime } from "https://esm.sh/date-fns-tz";
 
