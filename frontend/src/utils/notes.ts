@@ -28,7 +28,7 @@ export function getStringY(string: GuitarString): number {
 } 
 
 const STRINGS = ['E', 'A', 'D', 'G', 'B', 'e'];
-const NOTE_ORDER = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
+export const NOTE_ORDER = ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#'];
 
 export function generateNotes(numberOfFrets: number): Note[] {
   const notes: Note[] = [];

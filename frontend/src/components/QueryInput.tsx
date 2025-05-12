@@ -1,6 +1,7 @@
 import { Transform } from '../utils/transforms';
 import { Signal } from '@preact/signals';
 import { margin } from '../constants';
+import { NOTE_ORDER } from '../utils/notes';
 
 interface QueryInputProps {
   transforms: Signal<Transform[]>;
@@ -8,6 +9,9 @@ interface QueryInputProps {
 
 export function QueryInput({ transforms }: QueryInputProps) {
 
+  // TODO: Many of these functions are the same/similar and could be re-used.
+  // They basically boil down to either updating the type or the arg at the
+  // given index.
   function updateKeyOfTransform(transformIndex: number, value: string) {
     const newTransforms = [...transforms.value];
     newTransforms[transformIndex].args[1] = value;
@@ -76,6 +80,37 @@ export function QueryInput({ transforms }: QueryInputProps) {
     transforms.value = newTransforms;
   }
 
+  function updateColorDegreesDegree(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[1] = value;
+    transforms.value = newTransforms;
+  }
+
+  function updateColorDegreesColor(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[2] = value;
+    transforms.value = newTransforms;
+  }
+
+  function updateAddDegreeKey(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[1] = value;
+    transforms.value = newTransforms;
+  }
+
+  function updateMapType(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[0] = value;
+    if (value === 'color-degrees') {
+      newTransforms[transformIndex].args[1] = '1';
+    } else if (value === 'color-notes') {
+      newTransforms[transformIndex].args[1] = 'C';
+    } else if (value === 'add-degree') {
+      newTransforms[transformIndex].args[1] = 'C';
+    }
+    transforms.value = newTransforms;
+  }
+
   return (
     <div style={{ margin: `0 ${margin.left}px` }}>
       {transforms.value.map((t, transformIndex) => (
@@ -94,18 +129,9 @@ export function QueryInput({ transforms }: QueryInputProps) {
           )}
           {t.type === 'filter' && t.args[0] === 'key-of' && (
               <select value={t.args[1]} onChange={e => updateKeyOfTransform(transformIndex, (e.target as HTMLSelectElement).value)}>
-                <option value="C">C</option>
-                <option value="C#">C#</option>
-                <option value="D">D</option>
-                <option value="D#">D#</option>
-                <option value="E">E</option>
-                <option value="F">F</option>
-                <option value="F#">F#</option>
-                <option value="G">G</option>
-                <option value="G#">G#</option>
-                <option value="A">A</option>
-                <option value="A#">A#</option>
-                <option value="B">B</option>
+                {NOTE_ORDER.map(note => (
+                  <option value={note}>{note}</option>
+                ))}
               </select>
           )}
           {t.type === 'filter' && t.args[0] === 'between-frets' && (
@@ -118,23 +144,46 @@ export function QueryInput({ transforms }: QueryInputProps) {
               <input type="text" value={t.args[1]} onChange={e => updateOnStrings(transformIndex, (e.target as HTMLInputElement).value)} />
             </>
           )}
+          {t.type === 'map' && (
+            <>
+              <select value={t.args[0]} onChange={e => updateMapType(transformIndex, (e.target as HTMLSelectElement).value)}>
+                <option value="color-notes">Color notes</option>
+                <option value="color-degrees">Color degrees</option>
+                <option value="add-degree">Add degree</option>
+              </select>
+            </>
+          )}
           {t.type === 'map' && t.args[0] === 'color-notes' && (
             <>
               <select value={t.args[1]} onChange={e => updateColorNotesNote(transformIndex, (e.target as HTMLSelectElement).value)}>
-                <option value="C">C</option>
-                <option value="C#">C#</option>
-                <option value="D">D</option>
-                <option value="D#">D#</option>
-                <option value="E">E</option>
-                <option value="F">F</option>
-                <option value="F#">F#</option>
-                <option value="G">G</option>
-                <option value="G#">G#</option>
-                <option value="A">A</option>
-                <option value="A#">A#</option>
-                <option value="B">B</option>
+                {NOTE_ORDER.map(note => (
+                  <option value={note}>{note}</option>
+                ))}
               </select>
               <input type="color" value={t.args[2]} onChange={e => updateColorNotesColor(transformIndex, (e.target as HTMLInputElement).value)} />
+            </>
+          )}
+          {t.type === 'map' && t.args[0] === 'color-degrees' && (
+            <>
+              <select value={t.args[1]} onChange={e => updateColorDegreesDegree(transformIndex, (e.target as HTMLSelectElement).value)}>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+              </select>
+              <input type="color" value={t.args[2]} onChange={e => updateColorDegreesColor(transformIndex, (e.target as HTMLInputElement).value)} />
+            </>
+          )}
+          {t.type === 'map' && t.args[0] === 'add-degree' && (
+            <>
+              <select value={t.args[1]} onChange={e => updateAddDegreeKey(transformIndex, (e.target as HTMLSelectElement).value)}>
+                {NOTE_ORDER.map(note => (
+                  <option value={note}>{note}</option>
+                ))}
+              </select>
             </>
           )}
           <button onClick={() => removeTransform(transformIndex)}>Remove</button>
