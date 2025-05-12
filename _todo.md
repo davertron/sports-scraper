@@ -25,6 +25,7 @@
 - [x] @hockey: Updated page to have a calendar view at the top
 - [x] @guitar Use form controls for filtering/mapping for simplicity
 - [x] Icons or some way to distinguish between Ice Pack and Druckerman games
+- [x] @guitar: Add degree labels and coloring by degree
 
 ## Notes
 - Use [ ] for incomplete tasks
