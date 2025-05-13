@@ -5,10 +5,7 @@ import { formatInTimeZone, toZonedTime } from "https://esm.sh/date-fns-tz";
 import { overrideGames } from "../utils/gameOverrides.ts";
 
 const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
-const gamesBeforeOverride = await response.json() as Game[];
-console.log(`Team D game before override: `, gamesBeforeOverride.find(game => game.opponent === "Team D"));
-const games = overrideGames(gamesBeforeOverride);
-console.log(`Team D game after override: `, games.find(game => game.opponent === "Team D"));
+const games = overrideGames(await response.json() as Game[]);
 
 // Let's generate a calendar view for this week and the following two weeks
 // Each week starts on Sunday and ends on Saturday
@@ -57,9 +54,14 @@ function convertToTableRow(game: Game): {
   day: string;
   time: string;
   cancelled: boolean;
-} {
+} | null {
   const teamDisplay = game.team === "Ice Pack" ? `${game.team} vs. ${game.opponent}` : game.team;
   const isPastGame = game.eventStartTime < Date.now();
+
+  if (!game.eventStartTime || !game.eventEndTime) {
+    return null;
+  }
+
   return {
     isPastGame,
     teamDisplay,
@@ -74,4 +76,5 @@ function convertToTableRow(game: Game): {
 }
 
 export const tableRows = games.sort((a, b) => a.eventStartTime - b.eventStartTime)
-    .map(convertToTableRow);
+    .map(convertToTableRow)
+    .filter(Boolean);
