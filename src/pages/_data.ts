@@ -6,6 +6,7 @@ import { overrideGames } from "../utils/gameOverrides.ts";
 
 const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
 const games = overrideGames(await response.json() as Game[]);
+console.log(`Team D game: `, games.find(game => game.team === "Team D"));
 
 // Let's generate a calendar view for this week and the following two weeks
 // Each week starts on Sunday and ends on Saturday
@@ -57,7 +58,6 @@ function convertToTableRow(game: Game): {
 } {
   const teamDisplay = game.team === "Ice Pack" ? `${game.team} vs. ${game.opponent}` : game.team;
   const isPastGame = game.eventStartTime < Date.now();
-  console.log("game", game);
   return {
     isPastGame,
     teamDisplay,
