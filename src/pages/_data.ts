@@ -2,9 +2,10 @@ import { Game } from "../types.ts";
 import { formatGameTime } from "../utils/formatters.ts";
 import { startOfWeek, addDays, isToday, isSameDay, isBefore, startOfDay } from "https://esm.sh/date-fns";
 import { formatInTimeZone, toZonedTime } from "https://esm.sh/date-fns-tz";
+import { overrideGames } from "../utils/gameOverrides.ts";
 
 const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
-const games = await response.json() as Game[];
+const games = overrideGames(await response.json() as Game[]);
 
 // Let's generate a calendar view for this week and the following two weeks
 // Each week starts on Sunday and ends on Saturday
@@ -52,6 +53,7 @@ function convertToTableRow(game: Game): {
   team: string;
   day: string;
   time: string;
+  cancelled: boolean;
 } {
   const teamDisplay = game.team === "Ice Pack" ? `${game.team} vs. ${game.opponent}` : game.team;
   const isPastGame = game.eventStartTime < Date.now();
@@ -64,6 +66,7 @@ function convertToTableRow(game: Game): {
     time: formatInTimeZone(game.eventStartTime, 'America/New_York', 'h:mm a'),
     rink: game.rink,
     score: game.score || '-',
+    cancelled: game.cancelled || false,
   };
 }
 

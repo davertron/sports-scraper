@@ -6,6 +6,7 @@ export type Game = {
   score: string;
   team: string;
   sourceId: string;
+  cancelled?: boolean;
 };
 
 export type CairnsGame = {

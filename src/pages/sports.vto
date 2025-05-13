@@ -63,6 +63,12 @@ url: /sports/index.html
     &.big-fat-nerds {
       background-color: var(--big-fat-nerds-color);
     }
+
+    &.cancelled {
+      background-color: #ccc;
+      color: #666;
+      text-decoration: line-through;
+    }
   }
 
   .past-day {
@@ -88,6 +94,11 @@ url: /sports/index.html
   thead tr {
     border-left: 4px solid #f8f9fa;
   }
+
+  tr.cancelled {
+    text-decoration: line-through;
+    color: #ccc;
+  }
 </style>
 
 <h1>Sports Schedule</h1>
@@ -110,7 +121,7 @@ url: /sports/index.html
             <div class="day-container {{ day.isToday ? 'today' : '' }} {{ day.isPast ? 'past-day' : '' }}">
                 <div class="day-date">{{ day.date.toLocaleDateString('en-US', { day: 'numeric' }) }}</div>
                 {{ for game of day.games }}
-                    <div class="game-container {{ game.team.replaceAll(" ", "-").toLowerCase() }} {{ day.isPast ? 'calendar-past-game' : '' }}" title="{{ game.rink }}">
+                    <div class="game-container {{ game.team.replaceAll(" ", "-").toLowerCase() }} {{ day.isPast ? 'calendar-past-game' : '' }} {{ game.cancelled ? 'cancelled' : '' }}" title="{{ game.rink }}">
                         {{ game.time }} - {{ game.team }}
                     </div>
                 {{ /for }}
@@ -135,12 +146,12 @@ url: /sports/index.html
   </thead>
   <tbody>
     {{ for row of tableRows }}
-        <tr class="{{ row.isPastGame ? 'past-game' : '' }} {{ row.team.replaceAll(/\s/g, '-').toLowerCase() }}">
+        <tr class="{{ row.isPastGame ? 'past-game' : '' }} {{ row.team.replaceAll(/\s/g, '-').toLowerCase() }} {{ row.cancelled ? 'cancelled' : '' }}">
             <td>{{ row.day }}</td>
             <td>{{ row.time }}</td>
             <td>{{ row.teamDisplay }}</td>
             <td>{{ row.rink }}</td>
-            <td>{{ row.score }}</td>
+            <td>{{ row.cancelled ? 'Cancelled' : row.score }}</td>
         </tr>
     {{ /for }}
   </tbody>

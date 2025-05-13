@@ -2,12 +2,12 @@
 
 ## High Priority
 - [ ] @guitar: Update page layout to take up the whole screen, make sure fretboard is scalable and resizes with viewport
-- [ ] @guitar: Add "interval" label to highlights for scales
 - [ ] @guitar: Add a "scale" mode to the guitar app, where you can select a scale and see the positions of the notes on the fretboard.
 - [ ] @guitar: Add a "chord" mode to the guitar app, where you can select a chord and see the positions of the notes on the fretboard.
 
 ## Medium Priority
 - [ ] Look into a subdir for lume pages, so we don't have to worry about explicitly excluding new files all the time.
+- [ ] @guitar: Add a "without" filter for notes/degrees
 
 ## Low Priority
 - [ ] Add favicon
@@ -26,6 +26,7 @@
 - [x] @guitar Use form controls for filtering/mapping for simplicity
 - [x] Icons or some way to distinguish between Ice Pack and Druckerman games
 - [x] @guitar: Add degree labels and coloring by degree
+- [x] @sports: Think about how to exclude certain games (might be worth just having a "filter" file that gets the list of games passed in and can run whatever logic it wants)
 
 ## Notes
 - Use [ ] for incomplete tasks
