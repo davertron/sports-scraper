@@ -57,6 +57,7 @@ function convertToTableRow(game: Game): {
 } {
   const teamDisplay = game.team === "Ice Pack" ? `${game.team} vs. ${game.opponent}` : game.team;
   const isPastGame = game.eventStartTime < Date.now();
+  console.log("game", game);
   return {
     isPastGame,
     teamDisplay,
