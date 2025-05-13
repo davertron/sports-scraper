@@ -7,13 +7,6 @@ import { Game } from "../types.ts";
 
 export function overrideGames(games: Game[]): Game[] {
     return games.map(game => {
-        if(game.team === "Ice Pack" && game.opponent === "Team D") {
-            return {
-                ...game,
-                cancelled: true,
-            }
-        }
-
         if (game.team === "Big Fat Nerds" && format(game.eventStartTime, 'M/d/yyyy') === "5/7/2025") {
             return {
                 ...game,
