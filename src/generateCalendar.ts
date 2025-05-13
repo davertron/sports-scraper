@@ -14,6 +14,11 @@ function generateICS(calendarName: string, games: Game[]): string {
   ];
 
   for (const game of games) {
+    if (!game.eventStartTime || !game.eventEndTime) {
+      console.debug(`Game is missing eventStartTime or eventEndTime, not generating calendar entry for: `, game);
+      continue;
+    }
+
     const startDate = new Date(game.eventStartTime);
     const endDate = new Date(game.eventEndTime);
     
