@@ -59,6 +59,7 @@ function convertToTableRow(game: Game): {
   const isPastGame = game.eventStartTime < Date.now();
 
   if (!game.eventStartTime || !game.eventEndTime) {
+    console.debug(`Game is missing eventStartTime or eventEndTime: `, game);
     return null;
   }
 
