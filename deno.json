@@ -8,7 +8,7 @@
     "serve": "deno task lume -s",
     "scrape": "deno run --env-file=.env --allow-env --allow-read --allow-net --allow-sys src/scrapeAndUpload.ts",
     "calendar": "deno run --env-file=.env --allow-env --allow-read --allow-net --allow-sys src/generateCalendar.ts",
-    "fe": "cd frontend && npm run dev",
+    "fe": "cd frontend && npm run watch",
     "dev": "deno run -A _start.ts"
   },
   "compilerOptions": {
