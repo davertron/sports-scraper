@@ -2,7 +2,7 @@
 // This is useful for things like adding scores or for cancelling games that haven't yet
 // been removed the sources of truth.
 
-import { format } from "https://esm.sh/date-fns";
+import { format } from "https://esm.sh/date-fns@4.1.0";
 import { Game } from "../types.ts";
 
 export function overrideGames(games: Game[]): Game[] {

@@ -1,7 +1,7 @@
 import { Game } from "../types.ts";
 import { formatGameTime } from "../utils/formatters.ts";
-import { startOfWeek, addDays, isToday, isSameDay, isBefore, startOfDay } from "https://esm.sh/date-fns";
-import { formatInTimeZone, toZonedTime } from "https://esm.sh/date-fns-tz";
+import { startOfWeek, addDays, isToday, isSameDay, isBefore, startOfDay } from "https://esm.sh/date-fns@4.1.0";
+import { formatInTimeZone, toZonedTime } from "https://esm.sh/date-fns-tz@3.2.0";
 import { overrideGames } from "../utils/overrideGames.ts";
 
 const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
