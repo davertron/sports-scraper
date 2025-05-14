@@ -79,3 +79,5 @@ function convertToTableRow(game: Game): {
 export const tableRows = games.sort((a, b) => a.eventStartTime - b.eventStartTime)
     .map(convertToTableRow)
     .filter(Boolean);
+
+export const teams = [...new Set(games.map(game => game.team))];

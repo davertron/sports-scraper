@@ -1,6 +1,7 @@
 # TODO List
 
 ## High Priority
+- [ ] Clean up CSS, especially on the sports page, it's a mess and half styles are in the file and half are in styles.css. Maybe just use Tailwind?
 - [ ] @guitar: Update page layout to take up the whole screen, make sure fretboard is scalable and resizes with viewport
 - [ ] @guitar: Add a "scale" mode to the guitar app, where you can select a scale and see the positions of the notes on the fretboard.
 - [ ] @guitar: Add a "chord" mode to the guitar app, where you can select a chord and see the positions of the notes on the fretboard.

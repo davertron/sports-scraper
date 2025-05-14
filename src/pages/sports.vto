@@ -99,6 +99,10 @@ url: /sports/index.html
     text-decoration: line-through;
     color: #ccc;
   }
+
+  .hide {
+    display: none;
+  }
 </style>
 
 <h1>Sports Schedule</h1>
@@ -132,7 +136,15 @@ url: /sports/index.html
 
 <div class="header-container">
   <h2>Full Schedule</h2>
-  <button id="togglePastGames" onclick="togglePastGames()">Show Past Games</button>
+  <div class="filter-container">
+    <select id="teamFilter" onchange="filterTeam(this.value)">
+      <option value="">All</option>
+      {{ for team of teams }}
+        <option value="{{ team }}">{{ team }}</option>
+      {{ /for }}
+    </select>
+    <button id="togglePastGames" onclick="togglePastGames()">Show Past Games</button>
+  </div>
 </div>
 <table id="scheduleTable" class="hide-past-games">
   <thead>
@@ -163,5 +175,16 @@ url: /sports/index.html
     const button = document.querySelector('#togglePastGames');
     table.classList.toggle('hide-past-games');
     button.textContent = table.classList.contains('hide-past-games') ? 'Show Past Games' : 'Hide Past Games';
+  }
+
+  function filterTeam(team) {
+    const table = document.querySelector('#scheduleTable');
+    table.querySelectorAll('tbody tr').forEach(row => {
+      if (team === '' || row.classList.contains(team.replaceAll(/\s/g, '-').toLowerCase())) {
+        row.classList.remove('hide');
+      } else {
+        row.classList.add('hide');
+      }
+    });
   }
 </script>
