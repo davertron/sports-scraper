@@ -31,6 +31,7 @@ function generateICS(calendarName: string, games: Game[]): string {
 
     // Customize summary based on team type
     let summary;
+    let description = game.score ? `Score: ${game.score}` : '';
     switch(game.team) {
       case "Ice Pack":
         summary = `🏒 ${game.rink} - ${game.team} vs ${game.opponent || 'TBD'}`;
@@ -41,6 +42,7 @@ function generateICS(calendarName: string, games: Game[]): string {
       case "Big Fat Nerds":
       default:
         summary = `⚽ ${game.rink} - ${game.team} vs ${game.opponent || 'TBD'}`;
+        description += `\n\nTree Farm Map: https://s3.us-east-1.amazonaws.com/files.davertron.com/treefarm_map.jpg`;
         break;
     }
 
@@ -50,7 +52,7 @@ function generateICS(calendarName: string, games: Game[]): string {
       `DTSTART:${formatDate(startDate)}`,
       `DTEND:${formatDate(endDate)}`,
       `SUMMARY:${summary}`,
-      `DESCRIPTION:${game.score ? `Score: ${game.score}` : ''}`,
+      `DESCRIPTION:${description}`,
       "END:VEVENT",
     ];
 
