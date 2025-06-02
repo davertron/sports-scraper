@@ -10,9 +10,21 @@ export function overrideGames(games: Game[]): Game[] {
         if (game.team === "Big Fat Nerds" && format(game.eventStartTime, 'M/d/yyyy') === "5/7/2025") {
             return {
                 ...game,
-                score: "2-1",
+                score: "1-2",
             }
-        }
+        } 
+        if (game.team === "Big Fat Nerds" && format(game.eventStartTime, 'M/d/yyyy') === "5/14/2025") {
+            return {
+                ...game,
+                score: "3-1",
+            }
+        } 
+        if (game.team === "Big Fat Nerds" && format(game.eventStartTime, 'M/d/yyyy') === "5/28/2025") {
+            return {
+                ...game,
+                score: "3-3",
+            }
+        } 
         return game;
     });
 }

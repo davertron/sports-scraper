@@ -2,13 +2,13 @@ import { DateTime } from "https://esm.sh/luxon@3.6.1";
 
 // Hard code data from the CSV for now, which can be found here:
 // https://docs.google.com/spreadsheets/d/1JkeOGc9uHVgrP399IL-4oQEOZk-SPX9Fs-Iq_fNj0Z0/edit?gid=0#gid=0
-// Eventually scrape from the website
 const tsvGames = `
 Date	Time	Home Team	Away Team	Field
 Wednesday, May 7, 2025	6:00 PM	Big Fat Nerds	Ye Olde Northenders	TF 9
 Wednesday, May 14, 2025	6:00 PM	Swamp Donkeys	Big Fat Nerds	TF 8A
 Wednesday, May 21, 2025	7:00 PM	Big Fat Nerds	Gol Lytely	TF 12B
 Wednesday, May 28, 2025	7:00 PM	RFC United	Big Fat Nerds	TF 10
+Wednesday, June 4, 2025	7:00 PM	Big Fat Nerds	Foot Clan FC	TF 8B
 Wednesday, June 11, 2025	7:00 PM	Big Fat Nerds	Free Animals	TF 12A
 Wednesday, June 18, 2025	6:00 PM	The Old & The Breathless	Big Fat Nerds	TF 8B
 Wednesday, July 2, 2025	6:00 PM	Ye Olde Northenders	Big Fat Nerds	TF 12A
