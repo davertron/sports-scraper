@@ -4,7 +4,7 @@ import { format } from "https://esm.sh/date-fns@4.1.0";
 
 Deno.test('scrapeBigFatNerdsGames should return the correct number of games', async () => {
     const games = await scrapeBigFatNerdsGames();
-    expect(games.length).toBe(13);
+    expect(games.length).toBe(14);
 });
 
 Deno.test('scrapeBigFatNerdsGames should have properly formatted dates', async () => {
