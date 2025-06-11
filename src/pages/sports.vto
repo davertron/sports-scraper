@@ -105,9 +105,11 @@ url: /sports/index.html
   }
 </style>
 
-<h1>Sports Schedule</h1>
+<h1 class="text-3xl font-bold">
+    Sports Schedule
+  </h1>
 
-<h2>Next Three Weeks</h2>
+<h2 class="text-2xl font-bold">Next Three Weeks</h2>
 <div class="calendar-container">
 <div class="day-names">
     <div>Sun</div>
@@ -134,16 +136,16 @@ url: /sports/index.html
     </div>
 {{ /for }}
 
-<div class="header-container">
-  <h2>Full Schedule</h2>
-  <div class="filter-container">
-    <select id="teamFilter" onchange="filterTeam(this.value)">
+<div class="flex flex-row items-center justify-between">
+  <h2 class="text-2xl font-bold my-4">Full Schedule</h2>
+  <div>
+    <select id="team-filter" onchange="filterTeam(this.value)" class="bg-primary px-2 py-1 rounded-sm text-white text-sm">
       <option value="">All</option>
       {{ for team of teams }}
         <option value="{{ team }}">{{ team }}</option>
       {{ /for }}
     </select>
-    <button id="togglePastGames" onclick="togglePastGames()">Show Past Games</button>
+    <button id="togglePastGames" onclick="togglePastGames()" class="bg-primary px-2 py-1 rounded-sm text-white text-sm">Show Past Games</button>
   </div>
 </div>
 <table id="scheduleTable" class="hide-past-games">

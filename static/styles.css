@@ -1,3 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2c3e50;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   max-width: 1000px;
@@ -108,48 +114,6 @@ tr.past-game:hover {
   border-top: 1px solid #e1e1e1;
 }
 
-/* Button styles */
-#togglePastGames {
-  background-color: #2c3e50;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-#togglePastGames:hover {
-  background-color: #34495e;
-}
-
-#teamFilter {
-  background-color: #2c3e50;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s;
-}
-
-
-
-/* Header container styles */
-h2 {
-  display: inline-block;
-  margin-right: 20px;
-}
-
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1em;
-}
-
 .container ul {
   list-style: none;
   padding: 0;
@@ -258,9 +222,8 @@ body.personal-index .container, body.fourohfour .container {
     padding: 10px 12px;
   }
 
-  #togglePastGames {
-    padding: 10px 18px;
-    font-size: 1rem;
+  #team-filter::picker-icon {
+    display: none;
   }
 
   .header-container {
