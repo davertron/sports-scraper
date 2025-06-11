@@ -42,7 +42,7 @@ function generateICS(calendarName: string, games: Game[]): string {
       case "Big Fat Nerds":
       default:
         summary = `⚽ ${game.rink} - ${game.team} vs ${game.opponent || 'TBD'}`;
-        description += `\n\nTree Farm Map: https://s3.us-east-1.amazonaws.com/files.davertron.com/treefarm_map.jpg`;
+        description += `\\n\\nTree Farm Map: https://s3.us-east-1.amazonaws.com/files.davertron.com/treefarm_map.jpg`;
         break;
     }
 
@@ -52,7 +52,7 @@ function generateICS(calendarName: string, games: Game[]): string {
       `DTSTART:${formatDate(startDate)}`,
       `DTEND:${formatDate(endDate)}`,
       `SUMMARY:${summary}`,
-      `DESCRIPTION:${description}`,
+      description ? `DESCRIPTION:${description}` : "DESCRIPTION:",
       "END:VEVENT",
     ];
 
