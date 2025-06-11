@@ -1,19 +1,23 @@
 import { DateTime } from "https://esm.sh/luxon@3.6.1";
 import { Game } from "../types.ts";
 
-// My copy: https://docs.google.com/spreadsheets/d/1JkeOGc9uHVgrP399IL-4oQEOZk-SPX9Fs-Iq_fNj0Z0/edit?gid=0#gid=0
-// Original: https://docs.google.com/spreadsheets/d/1EhqIlq7-gLTzTDCn-7gmk8eWqEEEHZfFK3-2-LFu5NU/edit?gid=1340605254#gid=1340605254
-async function fetchGoogleSheetsData(): Promise<string> {
-  // The sheet ID is the long string in the URL between /d/ and /edit
-  const sheetId = "1EhqIlq7-gLTzTDCn-7gmk8eWqEEEHZfFK3-2-LFu5NU";
-  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=tsv`;
-  
+// Schedule: https://docs.google.com/spreadsheets/d/1EhqIlq7-gLTzTDCn-7gmk8eWqEEEHZfFK3-2-LFu5NU/edit?gid=0#gid=0
+// Results: https://docs.google.com/spreadsheets/d/1EhqIlq7-gLTzTDCn-7gmk8eWqEEEHZfFK3-2-LFu5NU/edit?gid=520016829#gid=520016829
+const SHEET_ID = "1EhqIlq7-gLTzTDCn-7gmk8eWqEEEHZfFK3-2-LFu5NU";
+const SCHEDULE_GID = "0";
+const RESULTS_GID = "520016829";
+
+async function fetchSheetTab(gid: string): Promise<string> {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=tsv&gid=${gid}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Failed to fetch Google Sheets data: ${response.statusText}`);
   }
-  
   return await response.text();
+}
+
+function isMatchdayLine(line: string): boolean {
+  return /^Matchday \d+/i.test(line.trim());
 }
 
 function isDateLine(line: string): boolean {
@@ -26,20 +30,64 @@ function isGameLine(line: string): boolean {
   return /^\d{1,2}:\d{2} [AP]M/.test(line.trim());
 }
 
-export async function scrapeBigFatNerdsGames(): Promise<Game[]> {
-  const tsvData = await fetchGoogleSheetsData();
-  const lines = tsvData.split('\n');
-  let currentDate = null;
-  const games: Game[] = [];
+function isResultGameLine(line: string): boolean {
+  // e.g. "Big Fat Nerds\t1\t2\tYe Olde Northenders"
+  return /\t\d+\t\d+\t/.test(line);
+}
 
+function parseResults(tsv: string) {
+  const lines = tsv.split('\n');
+  let currentMatchday = '';
+  const results: Record<string, {home: string, away: string, homeScore: string, awayScore: string}> = {};
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed) continue;
+    if (isMatchdayLine(trimmed)) {
+      currentMatchday = trimmed;
+      continue;
+    }
+    if (isResultGameLine(trimmed) && currentMatchday) {
+      const parts = trimmed.split(/\t|\s{2,}/).filter(Boolean);
+      if (parts.length < 4) continue;
+      const [homeTeam, homeScore, awayScore, awayTeam] = parts;
+      const key = `${currentMatchday}__${homeTeam}__${awayTeam}`;
+      results[key] = {home: homeTeam, away: awayTeam, homeScore, awayScore};
+    }
+  }
+  return results;
+}
+
+export async function scrapeBigFatNerdsGames(): Promise<Game[]> {
+  const [scheduleTsv, resultsTsv] = await Promise.all([
+    fetchSheetTab(SCHEDULE_GID),
+    fetchSheetTab(RESULTS_GID)
+  ]);
+
+  // Debug: print first 20 lines of each TSV
+  const scheduleLines = scheduleTsv.split('\n');
+  const resultsLines = resultsTsv.split('\n');
+  console.log('First 20 lines of SCHEDULE TSV:\n', scheduleLines.slice(0, 20).join('\n'));
+  console.log('First 20 lines of RESULTS TSV:\n', resultsLines.slice(0, 20).join('\n'));
+
+  const results = parseResults(resultsTsv);
+  let currentDate = null;
+  let currentMatchday = '';
+  const games: Game[] = [];
+
+  for (const line of scheduleLines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    if (isMatchdayLine(trimmed)) {
+      currentMatchday = trimmed;
+      continue;
+    }
     if (isDateLine(trimmed)) {
+      console.log('Detected date line:', trimmed);
       currentDate = trimmed;
       continue;
     }
-    if (isGameLine(trimmed) && currentDate) {
+    if (isGameLine(trimmed) && currentDate && currentMatchday) {
+      console.log('Detected game line:', trimmed);
       // Split by tab or multiple spaces (since Google Sheets export can be inconsistent)
       const parts = trimmed.split(/\t|\s{2,}/).filter(Boolean);
       // Expect: [time, home, 'vs', away, field]
@@ -53,13 +101,24 @@ export async function scrapeBigFatNerdsGames(): Promise<Game[]> {
       const eventStartTime = dt.toMillis();
       const eventEndTime = eventStartTime + 60 * 60 * 1000;
       const opponent = homeTeam === "Big Fat Nerds" ? awayTeam : homeTeam;
+      // Use matchday+teams as key
+      let score = '';
+      const resultKey = `${currentMatchday}__${homeTeam}__${awayTeam}`;
+      const revResultKey = `${currentMatchday}__${awayTeam}__${homeTeam}`;
+      if (results[resultKey]) {
+        const {homeScore, awayScore} = results[resultKey];
+        score = homeTeam === "Big Fat Nerds" ? `${homeScore} - ${awayScore}` : `${awayScore} - ${homeScore}`;
+      } else if (results[revResultKey]) {
+        const {homeScore, awayScore} = results[revResultKey];
+        score = awayTeam === "Big Fat Nerds" ? `${awayScore} - ${homeScore}` : `${homeScore} - ${awayScore}`;
+      }
       games.push({
         eventStartTime,
         eventEndTime,
         opponent,
         team: "Big Fat Nerds",
         rink: field,
-        score: '',
+        score,
         sourceId: `bigfatnerds-${eventStartTime}`,
       });
     }
@@ -69,5 +128,5 @@ export async function scrapeBigFatNerdsGames(): Promise<Game[]> {
 
 // Add this to run the scraper directly
 if (import.meta.main) {
-  scrapeBigFatNerdsGames().then(games => console.log(games)).catch(console.error);
+  scrapeBigFatNerdsGames().then(games => console.log('Final games array:', games)).catch(console.error);
 }
