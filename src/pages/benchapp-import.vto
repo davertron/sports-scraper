@@ -16,7 +16,13 @@ layout: "layout.vto"
     <h2>Fullstride Schedule</h2>
     <div style="text-align: center;">
         <form id="fullstride-schedule-input">
-        <textarea id="fullstride-schedule-input-textarea" placeholder="Paste your Fullstride schedule here" rows="10" cols="100"></textarea>
+        <textarea id="fullstride-schedule-input-textarea" placeholder="// Sample Input
+6-May,Tue,UVM,9:00 PM,c v f
+13-May,Tue,Leddy,10:05 PM,c v d
+21-May,Wed,Leddy,8:45 PM,b v c
+28-May,Wed,UVM,7:00 PM,c v e
+1-Jun,Sun,UVM,6:00 PM,a v c
+8-Jun,Sun,UVM,6:00 PM,c v f" rows="10" cols="100"></textarea>
     </form>
 
     <div style="text-align: center; margin: 10px;">
@@ -59,8 +65,8 @@ layout: "layout.vto"
     const benchappSchedule = lines.map((line) => {
       const [date, day, rink, time, _teams] = line.split(',');
       // Parse the date, assume it's the current year
+      const year = (new Date()).getFullYear(); // For some reason the parsed dates come back as 2001, so use the current date
       const dateObj = new Date(date);
-      const year = dateObj.getFullYear();
       const month = dateObj.getMonth() + 1;
       const dday = dateObj.getDate();
       return `GAME,REGULAR,,TBD,Ice Pack,${month}/${dday}/${year},${time},1:00,${rink},,`;
