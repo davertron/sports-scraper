@@ -2,6 +2,8 @@ import * as cheerio from "https://esm.sh/cheerio@1.0.0";
 import { DateTime } from "https://esm.sh/luxon@3.6.1";
 import { Game } from "../types.ts";
 
+const FULL_STRIDE_URL = "https://fullstridestaging.com/schedule_nf.php?league=1&programme_abbr=SRD";
+
 // The dates look like this: Jan 14 (Tue)9:50 pm
 function parseDate(dateString: string) {
   // Strip out the day of week part (i.e. Mon) to simplify parsing
@@ -14,7 +16,7 @@ function parseDate(dateString: string) {
 }
 
 export async function scrapeIcePackGames(): Promise<Game[]> {
-  const response = await fetch("https://fullstridestaging.com/schedule_nf.php?league=1&programme_abbr=SRC");
+  const response = await fetch(FULL_STRIDE_URL);
   const html = await response.text();
 
   const allGames: Game[] = [];
