@@ -65,9 +65,9 @@ export async function scrapeBigFatNerdsGames(): Promise<Game[]> {
 
   // Debug: print first 20 lines of each TSV
   const scheduleLines = scheduleTsv.split('\n');
-  const resultsLines = resultsTsv.split('\n');
-  console.log('First 20 lines of SCHEDULE TSV:\n', scheduleLines.slice(0, 20).join('\n'));
-  console.log('First 20 lines of RESULTS TSV:\n', resultsLines.slice(0, 20).join('\n'));
+  //const resultsLines = resultsTsv.split('\n');
+  //console.log('First 20 lines of SCHEDULE TSV:\n', scheduleLines.slice(0, 20).join('\n'));
+  //console.log('First 20 lines of RESULTS TSV:\n', resultsLines.slice(0, 20).join('\n'));
 
   const results = parseResults(resultsTsv);
   let currentDate = null;
@@ -82,12 +82,12 @@ export async function scrapeBigFatNerdsGames(): Promise<Game[]> {
       continue;
     }
     if (isDateLine(trimmed)) {
-      console.log('Detected date line:', trimmed);
+      //console.log('Detected date line:', trimmed);
       currentDate = trimmed;
       continue;
     }
     if (isGameLine(trimmed) && currentDate && currentMatchday) {
-      console.log('Detected game line:', trimmed);
+      //console.log('Detected game line:', trimmed);
       // Split by tab or multiple spaces (since Google Sheets export can be inconsistent)
       const parts = trimmed.split(/\t|\s{2,}/).filter(Boolean);
       // Expect: [time, home, 'vs', away, field]

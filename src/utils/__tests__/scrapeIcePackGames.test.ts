@@ -23,6 +23,24 @@ Deno.test('scrapeIcePackGames should have properly formatted dates', async () =>
     expect(new Date(games[0].eventStartTime).toLocaleString()).toBe("5/6/2025, 9:00:00 PM");
 });
 
+Deno.test('scrapeIcePackGames should return no games if there are no ice pack games', async () => {
+    globalThis.fetch = (input: RequestInfo | URL) => {
+        const url = input.toString();
+        if (/fullstridestaging/.test(url)) {
+            return Promise.resolve({
+                text: () => Deno.readTextFile("./src/utils/__tests__/__mocks__/empty-icepack-schedule.html"),
+                ok: true,
+                status: 200,
+                headers: new Headers(),
+            } as Response);
+        }
+        return originalFetch(input);
+    };
+
+    const games = await scrapeIcePackGames();
+    expect(games.length).toBe(0);
+});
+
 // Clean up after tests
 Deno.test('cleanup', () => {
     globalThis.fetch = originalFetch;

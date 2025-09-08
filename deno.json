@@ -9,7 +9,9 @@
     "scrape": "deno run --env-file=.env --allow-env --allow-read --allow-net --allow-sys src/scrapeAndUpload.ts",
     "calendar": "deno run --env-file=.env --allow-env --allow-read --allow-net --allow-sys src/generateCalendar.ts",
     "fe": "cd frontend && npm run watch",
-    "dev": "deno run -A _start.ts"
+    "dev": "deno run -A _start.ts",
+    "test": "deno test src/ --allow-read --allow-env --allow-net",
+    "test:watch": "deno test src/ --allow-read --allow-env --allow-net --watch"
   },
   "compilerOptions": {
     "types": [
