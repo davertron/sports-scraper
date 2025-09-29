@@ -79,13 +79,10 @@ export async function scrapeDruckermanGames({raw}: {raw?: boolean} = {}): Promis
   const essexGames: Game[] = [];
   if (essexData && Array.isArray(essexData)) {
     essexData.forEach(event => {
-      const startTime = new Date(event.start || event.startStr);
-      const endTime = new Date(event.end || event.endStr);
-      
       essexGames.push({
         rink: "Essex",
-        eventStartTime: startTime.getTime(),
-        eventEndTime: endTime.getTime(),
+        eventStartTime: toUTCMillis(event.start || event.startStr),
+        eventEndTime: toUTCMillis(event.end || event.endStr),
         sourceId: "essex-" + event.id,
         opponent: "",
         score: "",
