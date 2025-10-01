@@ -12,5 +12,6 @@ site.add("static/styles.css");
 
 site.copy("static");
 site.ignore("frontend");
+site.ignore("README.md");
 
 export default site;
