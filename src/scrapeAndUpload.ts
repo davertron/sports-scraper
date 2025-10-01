@@ -15,6 +15,8 @@ async function main() {
     const games = [...dGames, ...iGames, ...bfngGames];
     console.log(`Successfully scraped ${games.length} games`);
 
+    console.log("Games:", games);
+
     const dataString = JSON.stringify(games);
     const messageBuffer = new TextEncoder().encode(dataString);
     const hashBuffer = await crypto.subtle.digest("SHA-256", messageBuffer);

@@ -81,8 +81,8 @@ export async function scrapeDruckermanGames({raw}: {raw?: boolean} = {}): Promis
     essexData.forEach(event => {
       essexGames.push({
         rink: "Essex",
-        eventStartTime: toUTCMillis(event.start || event.startStr),
-        eventEndTime: toUTCMillis(event.end || event.endStr),
+        eventStartTime: toUTCMillis(event.start),
+        eventEndTime: toUTCMillis(event.end),
         sourceId: "essex-" + event.id,
         opponent: "",
         score: "",
