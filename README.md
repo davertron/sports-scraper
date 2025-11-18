@@ -470,14 +470,7 @@ No manual intervention required for normal operations.
 - 🔄 **Changes require running `deno task scrape`**
 - 📅 **Calendars auto-generate after data updates**
 - 🚀 **Site auto-deploys daily and on code changes**
-
-## 🤝 Contributing
-
-1. Make changes to scrapers or website code
-2. Test locally with `deno task scrape`
-3. Push to main branch
-4. Monitor GitHub Actions for deployment
-5. Verify changes on production site
+- 💣 **If you get errors during build about dependeny sha mismatches, you can delete deno.lock and run `deno task build` to regenerate it. This just seems to happen from time to time and is very annoying.**
 
 ## 📝 Changelog
 
