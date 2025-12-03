@@ -1,4 +1,4 @@
-import { DateTime } from "https://esm.sh/luxon@3.6.1";
+import { DateTime } from "luxon";
 import { Game } from "../types.ts";
 
 export function formatTime(date: Date): string {

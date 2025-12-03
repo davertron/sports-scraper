@@ -1,6 +1,8 @@
 {
   "imports": {
-    "lume/": "https://deno.land/x/lume@v3.0.1/"
+    "lume/": "https://deno.land/x/lume@v3.0.1/",
+    "luxon": "https://esm.sh/luxon@3.7.2",
+    "cheerio": "https://esm.sh/cheerio@1.0.0"
   },
   "tasks": {
     "lume": "echo \"import 'lume/cli.ts'\" | deno run -A -",

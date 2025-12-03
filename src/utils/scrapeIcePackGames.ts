@@ -1,5 +1,5 @@
-import * as cheerio from "https://esm.sh/cheerio@1.0.0";
-import { DateTime } from "https://esm.sh/luxon@3.6.1";
+import * as cheerio from "cheerio";
+import { DateTime } from "luxon";
 import { Game } from "../types.ts";
 
 const FULL_STRIDE_URL = "https://fullstridestaging.com/schedule_nf.php?league=1&programme_abbr=SRD";

@@ -1,4 +1,4 @@
-import { DateTime } from "https://esm.sh/luxon@3.6.1";
+import { DateTime } from "luxon";
 import { Game } from "../types.ts";
 
 // Schedule: https://docs.google.com/spreadsheets/d/1EhqIlq7-gLTzTDCn-7gmk8eWqEEEHZfFK3-2-LFu5NU/edit?gid=0#gid=0
