@@ -1,6 +1,6 @@
 import { scrapeBigFatNerdsGames } from '../scrapeBigFatNerdsGames.ts';
-import { expect } from "jsr:@std/expect";
-import { format } from "https://esm.sh/date-fns@4.1.0";
+import { expect } from "@std/expect";
+import { format } from "date-fns";
 
 Deno.test('scrapeBigFatNerdsGames should return the correct number of games', async () => {
     const games = await scrapeBigFatNerdsGames();

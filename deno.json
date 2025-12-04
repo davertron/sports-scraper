@@ -2,7 +2,10 @@
   "imports": {
     "lume/": "https://deno.land/x/lume@v3.0.1/",
     "luxon": "https://esm.sh/luxon@3.7.2",
-    "cheerio": "https://esm.sh/cheerio@1.0.0"
+    "cheerio": "https://esm.sh/cheerio@1.0.0",
+    "date-fns": "https://esm.sh/date-fns@4.1.0",
+    "date-fns-tz": "https://esm.sh/date-fns-tz@3.2.0",
+    "@std/expect": "jsr:@std/expect"
   },
   "tasks": {
     "lume": "echo \"import 'lume/cli.ts'\" | deno run -A -",

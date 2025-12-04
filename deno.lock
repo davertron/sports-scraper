@@ -1208,5 +1208,10 @@
     "https://esm.sh/date-fns@4.1.0?target=denonext": "30d4361e1d5f73511334b17104dcbee040874d16ba41d92d5ff6157040188434",
     "https://esm.sh/luxon@3.7.2": "e06813ae450626f1e2e2b25d38d77a9a2e47bcecc838e5be2fbd6e83eff97482",
     "https://esm.sh/luxon@3.7.2/denonext/luxon.mjs": "1167deb8e994c8613fc857ca59603773dde98b93dd3bbab3eaa217f8ad1f556c"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/expect@*"
+    ]
   }
 }
