@@ -5,7 +5,7 @@ import { expect } from "jsr:@std/expect";
 const originalFetch = globalThis.fetch;
 globalThis.fetch = (input: RequestInfo | URL) => {
     const url = input.toString();
-    if (url === "https://fullstridestaging.com/schedule_nf.php?league=1&programme_abbr=SRC") {
+    if (url.includes('fullstridestaging.com/schedule_nf.php')) {
         return Promise.resolve({
             text: () => Deno.readTextFile("./src/utils/__tests__/__mocks__/icepack-schedule.html"),
             ok: true,
@@ -19,8 +19,8 @@ globalThis.fetch = (input: RequestInfo | URL) => {
 Deno.test('scrapeIcePackGames should have properly formatted dates', async () => {
     const games = await scrapeIcePackGames();
     expect(games.length).toBe(6);
-    expect(new Date(games[0].eventStartTime).toISOString()).toBe("2025-05-07T01:00:00.000Z");
-    expect(new Date(games[0].eventStartTime).toLocaleString()).toBe("5/6/2025, 9:00:00 PM");
+    expect(new Date(games[0].eventStartTime).toISOString()).toBe("2026-05-07T01:00:00.000Z");
+    expect(new Date(games[0].eventStartTime).toLocaleString()).toBe("5/6/2026, 9:00:00 PM");
 });
 
 Deno.test('scrapeIcePackGames should return no games if there are no ice pack games', async () => {

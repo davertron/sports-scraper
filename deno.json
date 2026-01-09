@@ -3,8 +3,10 @@
     "lume/": "https://deno.land/x/lume@v3.0.1/",
     "luxon": "https://esm.sh/luxon@3.7.2",
     "cheerio": "https://esm.sh/cheerio@1.0.0",
-    "date-fns": "https://esm.sh/date-fns@4.1.0",
-    "date-fns-tz": "https://esm.sh/date-fns-tz@3.2.0",
+    "date-fns": "./vendor/date-fns/index.js",
+    "date-fns/format": "./vendor/date-fns/format.js",
+    "date-fns/locale/": "./vendor/date-fns/locale/",
+    "date-fns-tz": "./vendor/date-fns-tz/dist/esm/index.js",
     "@std/expect": "jsr:@std/expect"
   },
   "tasks": {

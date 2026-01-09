@@ -1,0 +1,12 @@
+# Exclude vendored packages from type checking
+vendor/
+
+# Exclude other directories that shouldn't be type-checked
+frontend/
+_infra/
+_site/
+node_modules/
+
+# Exclude test files in vendored packages
+**/vendor/**/*test*
+

@@ -2,6 +2,7 @@
     "deno.enable": true,
     "deno.disablePaths": [
         "frontend",
-        "_infra"
+        "_infra",
+        "vendor"
     ]
 }
