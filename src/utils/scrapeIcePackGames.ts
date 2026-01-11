@@ -2,7 +2,7 @@ import * as cheerio from "cheerio";
 import { DateTime } from "luxon";
 import { Game } from "../types.ts";
 
-const FULL_STRIDE_URL = "https://fullstridestaging.com/schedule_nf.php?league=1&programme_abbr=SRD";
+const FULL_STRIDE_URL = "https://fullstridestaging.com/schedule_nf.php?league=1&programme_abbr=SDU";
 
 // The dates look like this: Jan 14 (Tue)9:50 pm
 function parseDate(dateString: string) {
