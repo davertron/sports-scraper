@@ -1,14 +1,16 @@
 import { DateTime } from "luxon";
 import { Game } from "../types.ts";
 
-// Schedule: https://docs.google.com/spreadsheets/d/1EhqIlq7-gLTzTDCn-7gmk8eWqEEEHZfFK3-2-LFu5NU/edit?gid=0#gid=0
-// Results: https://docs.google.com/spreadsheets/d/1EhqIlq7-gLTzTDCn-7gmk8eWqEEEHZfFK3-2-LFu5NU/edit?gid=520016829#gid=520016829
-const SHEET_ID = "1EhqIlq7-gLTzTDCn-7gmk8eWqEEEHZfFK3-2-LFu5NU";
+// NOTE: Website to find the schedule: https://www.socialsportsvt.com/summer-coed-schedule--results--and-standings#Schedule
+
+// New site embeds published Google Sheet tabs (spreadsheets/d/e/.../pubhtml)
+// We consume the same tabs as TSV via the published endpoint.
+const PUBLISHED_SHEET_ID = "2PACX-1vSYJ-WJD9Wm5aO78heAJsHgf5MsR5sEOvfMvqBEXtpwHYZxUnw8cSWQo_E9x3gRAUaaQtbzFTFcwLUY";
 const SCHEDULE_GID = "0";
 const RESULTS_GID = "520016829";
 
 async function fetchSheetTab(gid: string): Promise<string> {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=tsv&gid=${gid}`;
+  const url = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_SHEET_ID}/pub?gid=${gid}&single=true&output=tsv`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Failed to fetch Google Sheets data: ${response.statusText}`);
