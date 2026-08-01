@@ -2,16 +2,11 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "deno",
-			"command": "task",
-			"args": [
-				"serve"
-			],
-			"problemMatcher": [
-				"$deno"
-			],
-			"label": "deno: serve",
-			"detail": "$ deno task lume -s",
+			"type": "npm",
+			"script": "serve",
+			"problemMatcher": [],
+			"label": "npm: serve",
+			"detail": "eleventy --serve",
 			"group": {
 				"kind": "build",
 				"isDefault": true

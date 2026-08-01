@@ -26,13 +26,6 @@ export function formatGameTime(game: Game): string {
 
 // Parse a local ISO-ish date string (e.g. "2025-04-11T06:40:00"), interpreting
 // it as America/New_York local time, and return UTC epoch millis.
-//
-// Uses the Temporal global, which only exists under Node (26+), not Deno.
-// That's fine here because this function is only ever called from the
-// Node-run scraper pipeline (scrapeDruckermanGames.ts) -- never from the
-// Deno-run Lume build (src/pages/_data.ts), which only uses formatGameTime
-// and formatDateRange above. Once Lume is replaced, this whole file can
-// assume Node/Temporal unconditionally.
 export function toUTCMillis(dateString: string): number {
   return Temporal.PlainDateTime.from(dateString)
     .toZonedDateTime("America/New_York")
@@ -70,8 +63,7 @@ export function to24Hour(hour12: number, meridiem: string): number {
 }
 
 // Build UTC epoch millis from wall-clock date/time parts interpreted in the
-// given IANA zone (defaults to America/New_York). Same Temporal/Node-only
-// caveat as toUTCMillis above.
+// given IANA zone (defaults to America/New_York).
 export function zonedMillis(
   parts: { year: number; month: number; day: number; hour: number; minute: number },
   timeZone = "America/New_York"

@@ -9,7 +9,7 @@ This project consists of several interconnected components:
 - **Data Scrapers**: Extract game schedules from various sources
 - **Data Processing**: Normalize and process scraped data
 - **Cloud Storage**: Store processed data in AWS S3
-- **Static Site Generation**: Build website using Lume (Deno-based SSG)
+- **Static Site Generation**: Build website using Eleventy (Node-based SSG)
 - **Calendar Generation**: Create ICS calendar files for team schedules
 - **Automated Deployment**: GitHub Actions for scheduled scraping and deployment
 
@@ -48,9 +48,9 @@ graph TB
     end
     
     subgraph "Website Generation"
-        LUME[Lume SSG]
-        PAGES[sports.vto]
-        DATA[_data.ts]
+        ELEVENTY[Eleventy SSG]
+        PAGES[sports.njk]
+        DATA[sports.11tydata.js]
     end
     
     subgraph "Calendar Generation"
@@ -76,8 +76,8 @@ graph TB
     HASH --> S3
     
     S3 --> CF
-    CF --> LUME
-    LUME --> PAGES
+    CF --> ELEVENTY
+    ELEVENTY --> PAGES
     PAGES --> DATA
     DATA --> CF
     
@@ -87,7 +87,7 @@ graph TB
     
     SCRAPE --> SU
     CALENDAR --> CAL
-    DEPLOY --> LUME
+    DEPLOY --> ELEVENTY
 ```
 
 ### Detailed Data Flow
@@ -166,9 +166,9 @@ graph LR
    - Uploads to S3 with versioned filenames
 
 3. **Website Generation** (`src/pages/`)
-   - `sports.vto` - Main sports schedule page
-   - `_data.ts` - Fetches data from S3 for page generation
-   - Uses Lume static site generator
+   - `sports.njk` - Main sports schedule page (Nunjucks template)
+   - `sports.11tydata.js` - Fetches data from S3 and does the date/calendar math for `sports.njk`
+   - Uses the Eleventy static site generator
 
 4. **Calendar Generation** (`src/generateCalendar.ts`)
    - Creates ICS calendar files for each team
@@ -183,27 +183,31 @@ This means:
 - The website at `http://localhost:3000` fetches data from `https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json`
 - To see local changes, you need to either:
   1. Run the scraper locally and upload to S3, or
-  2. Temporarily modify `src/pages/_data.ts` to use local data
+  2. Temporarily modify `src/pages/sports.11tydata.js` to use local data
 
 ## 📁 Project Structure
 
 ```
 sports-scraper/
+├── eleventy.config.js      # Eleventy (SSG) config
 ├── src/
-│   ├── pages/              # Website pages and data processing
-│   │   ├── sports.vto      # Main sports schedule page
-│   │   └── _data.ts        # Data fetching for pages
-│   ├── utils/              # Scraping utilities
+│   ├── pages/               # Website pages (Eleventy input dir)
+│   │   ├── _includes/       # layout.njk, icons.njk
+│   │   ├── sports.njk       # Main sports schedule page
+│   │   ├── sports.11tydata.js # Data fetching + calendar math for sports.njk
+│   │   └── *.njk            # index, error, guitar, benchapp-import pages
+│   ├── utils/                # Scraping utilities
 │   │   ├── scrapeDruckermanGames.ts
 │   │   ├── scrapeIcePackGames.ts
 │   │   ├── scrapeBigFatNerdsGames.ts
-│   │   └── s3.ts           # S3 upload/download utilities
-│   ├── scrapeAndUpload.ts  # Main scraping orchestration
+│   │   └── s3.ts            # S3 upload/download utilities (aws4fetch)
+│   ├── scrapeAndUpload.ts   # Main scraping orchestration
 │   └── generateCalendar.ts # Calendar generation
-├── frontend/               # React frontend (if used)
-├── _site/                  # Generated static site
-├── .github/workflows/      # GitHub Actions
-└── _infra/                 # AWS CDK infrastructure
+├── frontend/                # Preact "guitar" app, built separately with Vite
+├── static/                  # Assets + Tailwind source CSS, copied/compiled into _site/
+├── _site/                   # Generated static site
+├── .github/workflows/       # GitHub Actions
+└── _infra/                  # AWS CDK infrastructure
 ```
 
 ## 🛠️ Development Commands
@@ -215,15 +219,25 @@ npm run scrape
 # Generate calendar files
 npm run calendar
 
-# Build static site
-deno task build
+# Build static site (Eleventy + Tailwind CSS) -- needs `npm install` first,
+# since Eleventy/Tailwind are devDependencies, not vendored (see below)
+npm install
+npm run build
 
-# Serve site locally (loads from prod S3!)
-deno task serve
+# Serve site locally with live reload (loads from prod S3!)
+npm run serve
 
 # Run tests
 npm test
+
+# Type-check (needs `npm install` for @types/node and typescript)
+npm run typecheck
 ```
+
+`npm run scrape` and `npm run calendar` never need `npm install` -- their dependencies
+(`aws4fetch`, `cheerio`) are vendored directly into `node_modules` in git. Eleventy and the
+Tailwind CLI are *not* vendored (Tailwind ships platform-specific native binaries that can't be
+safely committed), so building the site needs one `npm install` first.
 
 ## 🔄 Automated Workflows
 
@@ -249,8 +263,8 @@ npm test
 - **Trigger**: Daily at 12:00 PM UTC, or on push to main
 - **Workflow**: `.github/workflows/deploy-site.yml`
 - **Process**:
-  1. Builds static site with Lume
-  2. Builds React frontend
+  1. Builds static site with Eleventy
+  2. Builds Preact frontend (the "guitar" app)
   3. Syncs to S3 bucket
   4. Invalidates CloudFront cache
 
@@ -363,7 +377,7 @@ system TZ on a runner would make those overrides silently stop matching.
 **Solutions**:
 1. Check GitHub Actions logs for specific errors
 2. Verify AWS credentials and permissions
-3. Test build locally with `deno task build`
+3. Test build locally with `npm install && npm run build`
 
 ### Development Workflow
 
@@ -390,8 +404,9 @@ For effective local development:
 3. **Test website locally**:
    ```bash
    # Build and serve (still loads from prod S3!)
-   deno task build
-   deno task serve
+   npm install
+   npm run build
+   npm run serve
    ```
 
 4. **Force cache invalidation**:
@@ -423,7 +438,7 @@ Use these techniques to debug data flow issues:
 4. **Test individual components**:
    ```bash
    # Test data fetching
-   deno run --allow-net -e "console.log(await fetch('https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json').then(r => r.json()))"
+   node -e "fetch('https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json').then(r => r.json()).then(console.log)"
    
    # Test calendar generation
    npm run calendar
@@ -461,8 +476,8 @@ No manual intervention required for normal operations.
 
 ### Key Files
 - `src/scrapeAndUpload.ts` - Main scraping orchestration
-- `src/pages/sports.vto` - Main website page
-- `src/pages/_data.ts` - Data fetching for website
+- `src/pages/sports.njk` - Main website page
+- `src/pages/sports.11tydata.js` - Data fetching + calendar math for the website
 - `src/generateCalendar.ts` - Calendar generation
 - `.github/workflows/` - Automated workflows
 
@@ -476,7 +491,7 @@ No manual intervention required for normal operations.
 - 🔄 **Changes require running `npm run scrape`**
 - 📅 **Calendars auto-generate after data updates**
 - 🚀 **Site auto-deploys daily and on code changes**
-- 💣 **If you get errors during build about dependeny sha mismatches, you can delete deno.lock and run `deno task build` to regenerate it. This just seems to happen from time to time and is very annoying.**
+- 🧰 **The whole stack runs on Node 26+ now** (see `.nvmrc`) -- Temporal (native date/time, no more date-fns/luxon), and Eleventy replacing the old Deno-based Lume SSG.
 
 ## 📝 Changelog
 
@@ -484,3 +499,4 @@ No manual intervention required for normal operations.
 - **v1.1**: Added calendar generation
 - **v1.2**: Added automated deployment
 - **v1.3**: Added comprehensive documentation and diagrams
+- **v2.0**: Migrated off Deno entirely -- scraper pipeline and site build (Lume → Eleventy) now run on Node 26 + Temporal; dependencies minimized and vendored where safe to do so

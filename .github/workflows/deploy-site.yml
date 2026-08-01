@@ -17,21 +17,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Set up Deno
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          deno-version: v2.x
+          node-version: 26
 
-      # Build the site
+      # Eleventy and the Tailwind CLI are devDependencies (not vendored --
+      # unlike the scrape/calendar deps, Tailwind ships platform-specific
+      # native binaries that can't be safely committed to git), so building
+      # the site needs an install.
+      - name: Install build dependencies
+        run: npm install
+
+      # Build the site (Eleventy + Tailwind CSS)
       - name: Build site
-        run: deno task lume
+        run: npm run build
 
-      # Install dependencies
-      - name: Install dependencies
+      # Install and build the frontend
+      - name: Install frontend dependencies
         run: cd frontend && npm install
 
-      # Build the frontend
       - name: Build frontend
         run: cd frontend && npm run build
 
