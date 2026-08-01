@@ -1,4 +1,5 @@
-import { Game } from "./types.ts";
+import { fileURLToPath } from "node:url";
+import type { Game } from "./types.ts";
 import { uploadCalendarToS3 } from "./utils/s3.ts";
 
 function generateICS(calendarName: string, games: Game[]): string {
@@ -120,10 +121,10 @@ async function main() {
     }
   } catch (error) {
     console.error("Error in calendar generation process:", error);
-    Deno.exit(1);
+    process.exit(1);
   }
 }
 
-if (import.meta.main) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main();
-} 
+}

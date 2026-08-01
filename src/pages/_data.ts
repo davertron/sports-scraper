@@ -1,4 +1,4 @@
-import { Game } from "../types.ts";
+import type { Game } from "../types.ts";
 import { formatGameTime } from "../utils/formatters.ts";
 import { startOfWeek, addDays, isToday, isSameDay, isBefore, startOfDay } from "date-fns";
 import { formatInTimeZone, toZonedTime } from "date-fns-tz";

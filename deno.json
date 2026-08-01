@@ -1,24 +1,18 @@
 {
+  "nodeModulesDir": "none",
   "imports": {
     "lume/": "https://deno.land/x/lume@v3.0.1/",
-    "luxon": "https://esm.sh/luxon@3.7.2",
-    "cheerio": "https://esm.sh/cheerio@1.0.0",
     "date-fns": "./vendor/date-fns/index.js",
     "date-fns/format": "./vendor/date-fns/format.js",
     "date-fns/locale/": "./vendor/date-fns/locale/",
-    "date-fns-tz": "./vendor/date-fns-tz/dist/esm/index.js",
-    "@std/expect": "jsr:@std/expect"
+    "date-fns-tz": "./vendor/date-fns-tz/dist/esm/index.js"
   },
   "tasks": {
     "lume": "echo \"import 'lume/cli.ts'\" | deno run -A -",
     "build": "deno task lume",
     "serve": "deno task lume -s",
-    "scrape": "deno run --env-file=.env --allow-env --allow-read --allow-net --allow-sys src/scrapeAndUpload.ts",
-    "calendar": "deno run --env-file=.env --allow-env --allow-read --allow-net --allow-sys src/generateCalendar.ts",
     "fe": "cd frontend && npm run watch",
-    "dev": "deno run -A _start.ts",
-    "test": "deno test src/ --allow-read --allow-env --allow-net",
-    "test:watch": "deno test src/ --allow-read --allow-env --allow-net --watch"
+    "dev": "deno run -A _start.ts"
   },
   "compilerOptions": {
     "types": [

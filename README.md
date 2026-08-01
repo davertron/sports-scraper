@@ -134,7 +134,7 @@ graph LR
     subgraph "Local Development"
         DEV[Developer]
         LOCAL[Local Files]
-        SCRAPE_LOCAL[deno task scrape]
+        SCRAPE_LOCAL[npm run scrape]
         S3_PROD[Production S3]
     end
     
@@ -210,10 +210,10 @@ sports-scraper/
 
 ```bash
 # Run scraper locally
-deno task scrape
+npm run scrape
 
 # Generate calendar files
-deno task calendar
+npm run calendar
 
 # Build static site
 deno task build
@@ -222,7 +222,7 @@ deno task build
 deno task serve
 
 # Run tests
-deno task test
+npm test
 ```
 
 ## 🔄 Automated Workflows
@@ -313,18 +313,24 @@ STATIC_SITE_BUCKET=davertron.com
 SITE_CLOUDFRONT_DISTRIBUTION_ID=site-cf-distribution-id
 ```
 
+Also required: the machine running `npm run scrape` must have its system timezone set to
+**America/New_York**. Most date handling is explicitly zone-aware (via `Temporal`), but a couple
+of spots (`overrideGames.ts`'s hardcoded score overrides) intentionally match on the system's
+local calendar day rather than a fixed zone, mirroring the previous date-fns behavior. Wrong
+system TZ on a runner would make those overrides silently stop matching.
+
 ## 🐛 Troubleshooting
 
 ### Why don't I see my changes in the UI?
 
 1. **Check data source**: The website loads from production S3, not local files
-2. **Run scraper**: Use `deno task scrape` to update production data
+2. **Run scraper**: Use `npm run scrape` to update production data
 3. **Check CloudFront**: Cache might need invalidation
 4. **Verify upload**: Check S3 bucket for new files
 
 ### Local Development Tips
 
-1. **Test scrapers locally**: Use `deno task scrape` to verify scraping logic
+1. **Test scrapers locally**: Use `npm run scrape` to verify scraping logic
 2. **Check S3 uploads**: Verify data is being uploaded correctly
 3. **Monitor CloudFront**: Check if cache invalidation is working
 4. **Use browser dev tools**: Check network requests to see data source
@@ -334,7 +340,7 @@ SITE_CLOUDFRONT_DISTRIBUTION_ID=site-cf-distribution-id
 #### Issue: "I modified a scraper but don't see changes"
 **Root Cause**: Local website loads from production S3, not local files
 **Solutions**:
-1. Run `deno task scrape` to upload changes to S3
+1. Run `npm run scrape` to upload changes to S3
 2. Wait for CloudFront cache invalidation (usually immediate)
 3. Hard refresh browser (Ctrl+F5)
 
@@ -365,11 +371,11 @@ For effective local development:
 
 1. **Test scraping logic**:
    ```bash
-   # Test individual scrapers
-   deno run --allow-net src/utils/scrapeDruckermanGames.ts
-   
+   # Test an individual scraper directly (e.g. Big Fat Nerds)
+   node src/utils/scrapeBigFatNerdsGames.ts
+
    # Test full scraping pipeline
-   deno task scrape
+   npm run scrape
    ```
 
 2. **Verify data upload**:
@@ -420,7 +426,7 @@ Use these techniques to debug data flow issues:
    deno run --allow-net -e "console.log(await fetch('https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json').then(r => r.json()))"
    
    # Test calendar generation
-   deno task calendar
+   npm run calendar
    ```
 
 ## 📊 Data Sources
@@ -467,7 +473,7 @@ No manual intervention required for normal operations.
 
 ### Important Notes
 - ⚠️ **Local development loads from production S3**
-- 🔄 **Changes require running `deno task scrape`**
+- 🔄 **Changes require running `npm run scrape`**
 - 📅 **Calendars auto-generate after data updates**
 - 🚀 **Site auto-deploys daily and on code changes**
 - 💣 **If you get errors during build about dependeny sha mismatches, you can delete deno.lock and run `deno task build` to regenerate it. This just seems to happen from time to time and is very annoying.**

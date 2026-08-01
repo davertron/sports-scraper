@@ -1,0 +1,23 @@
+{
+  "name": "sports-scraper",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "scrape": "node --env-file=.env src/scrapeAndUpload.ts",
+    "calendar": "node --env-file=.env src/generateCalendar.ts",
+    "test": "node --test src/utils/__tests__/*.test.ts",
+    "test:watch": "node --test --watch src/utils/__tests__/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "aws4fetch": "^1.0.20",
+    "cheerio": "^1.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2",
+    "typescript": "^7.0.2"
+  }
+}
