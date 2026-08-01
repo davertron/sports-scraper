@@ -1,0 +1,30 @@
+{
+  "name": "sports-scraper",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=26"
+  },
+  "scripts": {
+    "scrape": "node --env-file-if-exists=.env src/scrapeAndUpload.ts",
+    "calendar": "node --env-file-if-exists=.env src/generateCalendar.ts",
+    "build": "rm -rf _site && eleventy && npm run build:css",
+    "build:css": "tailwindcss -i static/styles.css -o _site/static/styles.css --minify",
+    "serve": "eleventy --serve",
+    "fe": "cd frontend && npm run watch",
+    "dev": "node _start.js",
+    "test": "node --test src/__tests__/*.test.ts src/utils/__tests__/*.test.ts",
+    "test:watch": "node --test --watch src/__tests__/*.test.ts src/utils/__tests__/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "aws4fetch": "^1.0.20",
+    "cheerio": "^1.2.0"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.6",
+    "@tailwindcss/cli": "^4.3.3",
+    "@types/node": "^26.1.2",
+    "typescript": "^7.0.2"
+  }
+}

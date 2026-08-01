@@ -2,3 +2,10 @@ _site
 _cache
 .env
 frontend/node_modules
+
+# root node_modules IS tracked (see package.json "dependencies") -- it's
+# vendored so `npm run scrape`/`npm run calendar` never need `npm install`.
+# devDependencies (typescript, @types/node, eleventy, tailwind CLI) are
+# intentionally NOT vendored -- tailwind ships platform-specific native
+# binaries that can't be safely committed. Run `npm install` locally once
+# if you want `npm run typecheck` or `npm run build` to work.

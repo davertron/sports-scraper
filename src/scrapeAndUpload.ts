@@ -1,8 +1,8 @@
+import { fileURLToPath } from "node:url";
 import { scrapeDruckermanGames } from "./utils/scrapeDruckermanGames.ts";
 import { scrapeIcePackGames } from "./utils/scrapeIcePackGames.ts";
 import { uploadToS3 } from "./utils/s3.ts";
 import { scrapeBigFatNerdsGames } from "./utils/scrapeBigFatNerdsGames.ts";
-import { encodeHex } from "jsr:@std/encoding/hex";
 
 async function main() {
   try {
@@ -20,7 +20,7 @@ async function main() {
     const dataString = JSON.stringify(games);
     const messageBuffer = new TextEncoder().encode(dataString);
     const hashBuffer = await crypto.subtle.digest("SHA-256", messageBuffer);
-    const hash = encodeHex(hashBuffer);
+    const hash = Buffer.from(hashBuffer).toString("hex");
     console.log(`Calculated hash: ${hash}`);
     // TODO: Might be good to put this somewhere else since they aren't all
     // hockey games...
@@ -34,10 +34,10 @@ async function main() {
     }
   } catch (error) {
     console.error("Error in scrape and upload process:", error);
-    Deno.exit(1);
+    process.exit(1);
   }
 }
 
-if (import.meta.main) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   main();
 } 

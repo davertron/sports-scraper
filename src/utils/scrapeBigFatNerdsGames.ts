@@ -1,5 +1,6 @@
-import { DateTime } from "luxon";
-import { Game } from "../types.ts";
+import { fileURLToPath } from "node:url";
+import type { Game } from "../types.ts";
+import { monthNameToNumber, to24Hour, zonedMillis } from "./formatters.ts";
 
 // NOTE: Website to find the schedule: https://www.socialsportsvt.com/summer-coed-schedule--results--and-standings#Schedule
 
@@ -35,6 +36,26 @@ function isGameLine(line: string): boolean {
 function isResultGameLine(line: string): boolean {
   // e.g. "Big Fat Nerds\t1\t2\tYe Olde Northenders"
   return /\t\d+\t\d+\t/.test(line);
+}
+
+// e.g. "Wednesday, May 7, 2025" + "6:00 PM"
+const DATE_TIME_PATTERN = /^[A-Za-z]+,\s+([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})\s+(\d{1,2}):(\d{2})\s*([AP]M)$/i;
+
+function parseGameDateTime(dateLine: string, timeStr: string): number {
+  const combined = `${dateLine} ${timeStr}`;
+  const match = combined.match(DATE_TIME_PATTERN);
+  if (!match) {
+    throw new Error(`Unable to parse Big Fat Nerds game date/time: "${combined}"`);
+  }
+  const [, monthName, day, year, hour12, minute, meridiem] = match;
+
+  return zonedMillis({
+    year: Number(year),
+    month: monthNameToNumber(monthName),
+    day: Number(day),
+    hour: to24Hour(Number(hour12), meridiem),
+    minute: Number(minute),
+  });
 }
 
 function parseResults(tsv: string) {
@@ -97,10 +118,7 @@ export async function scrapeBigFatNerdsGames(): Promise<Game[]> {
       const [time, homeTeam, , awayTeam, field] = parts;
       if (homeTeam !== "Big Fat Nerds" && awayTeam !== "Big Fat Nerds") continue;
       // Parse date and time
-      const dt = DateTime.fromFormat(`${currentDate} ${time}`, "EEEE, MMMM d, yyyy h:mm a", {
-        zone: "America/New_York"
-      });
-      const eventStartTime = dt.toMillis();
+      const eventStartTime = parseGameDateTime(currentDate, time);
       const eventEndTime = eventStartTime + 60 * 60 * 1000;
       const opponent = homeTeam === "Big Fat Nerds" ? awayTeam : homeTeam;
       // Use matchday+teams as key
@@ -129,6 +147,6 @@ export async function scrapeBigFatNerdsGames(): Promise<Game[]> {
 }
 
 // Add this to run the scraper directly
-if (import.meta.main) {
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
   scrapeBigFatNerdsGames().then(games => console.log('Final games array:', games)).catch(console.error);
 }

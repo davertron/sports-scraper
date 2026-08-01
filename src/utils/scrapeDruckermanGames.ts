@@ -1,4 +1,4 @@
-import { CairnsGame, Game } from "../types.ts";
+import type { CairnsGame, Game } from "../types.ts";
 import { toUTCMillis } from "./formatters.ts";
 
 export async function scrapeDruckermanGames({raw}: {raw?: boolean} = {}): Promise<Game[] | CairnsGame[]> {
