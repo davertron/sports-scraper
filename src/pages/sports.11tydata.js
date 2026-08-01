@@ -1,5 +1,12 @@
-import { formatGameTime, formatTime } from "../utils/formatters.ts";
-import { overrideGames } from "../utils/overrideGames.ts";
+// formatters.ts/overrideGames.ts use `import type` (needed for Node's own
+// type-stripping, see formatters.ts), which Eleventy's --serve/--watch
+// dependency walker can't parse (it uses a plain-JS parser, not TS-aware).
+// A *static* import of those files here trips that walker and crashes the
+// dev server (build is unaffected -- this only matters for --serve/--watch).
+// Dynamic import() sidesteps it: the walker only follows static import
+// declarations, so it never has a reason to open those files.
+const { formatGameTime, formatTime } = await import("../utils/formatters.ts");
+const { overrideGames } = await import("../utils/overrideGames.ts");
 
 // 'M/d (EEE)' style label, e.g. "5/7 (Wed)" -- matches the old date-fns-tz
 // formatInTimeZone(ts, 'America/New_York', 'M/d (EEE)') output.

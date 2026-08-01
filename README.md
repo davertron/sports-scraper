@@ -180,7 +180,7 @@ graph LR
 
 This means:
 - Changes to scraping scripts won't be visible in the UI until they're deployed to production
-- The website at `http://localhost:3000` fetches data from `https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json`
+- The website at `http://localhost:8080` (Eleventy's default dev server port) fetches data from `https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json`
 - To see local changes, you need to either:
   1. Run the scraper locally and upload to S3, or
   2. Temporarily modify `src/pages/sports.11tydata.js` to use local data
