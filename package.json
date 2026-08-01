@@ -8,8 +8,8 @@
   "scripts": {
     "scrape": "node --env-file=.env src/scrapeAndUpload.ts",
     "calendar": "node --env-file=.env src/generateCalendar.ts",
-    "test": "node --test src/utils/__tests__/*.test.ts",
-    "test:watch": "node --test --watch src/utils/__tests__/*.test.ts",
+    "test": "node --test src/__tests__/*.test.ts src/utils/__tests__/*.test.ts",
+    "test:watch": "node --test --watch src/__tests__/*.test.ts src/utils/__tests__/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

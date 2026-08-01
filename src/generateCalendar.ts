@@ -2,7 +2,7 @@ import { fileURLToPath } from "node:url";
 import type { Game } from "./types.ts";
 import { uploadCalendarToS3 } from "./utils/s3.ts";
 
-function generateICS(calendarName: string, games: Game[]): string {
+export function generateICS(calendarName: string, games: Game[]): string {
   const now = new Date();
   const calendar = [
     "BEGIN:VCALENDAR",
