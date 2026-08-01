@@ -7,13 +7,13 @@
 - [ ] @guitar: Add a "chord" mode to the guitar app, where you can select a chord and see the positions of the notes on the fretboard.
 
 ## Medium Priority
-- [ ] Look into a subdir for lume pages, so we don't have to worry about explicitly excluding new files all the time.
 - [ ] @guitar: Add a "without" filter for notes/degrees
 
 ## Low Priority
 - [ ] Add favicon
 
 ## Completed
+- [x] Switched off Deno/Lume to Node + Eleventy -- pages live under src/pages with no explicit per-file exclusion needed (was the "subdir for lume pages" ask)
 - [x] Need to invalidate stylesheet on deploy (should I invalidate everything? in the cloudfront cache?)
 - [x] Better mobile styling
 - [x] Make lume ignore infra folder
