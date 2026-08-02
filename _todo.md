@@ -10,9 +10,9 @@
 - [ ] @guitar: Add a "without" filter for notes/degrees
 
 ## Low Priority
-- [ ] Add favicon
 
 ## Completed
+- [x] Add favicon -- cropped from the homepage avatar (static/vector_me.png)
 - [x] Switched off Deno/Lume to Node + Eleventy -- pages live under src/pages with no explicit per-file exclusion needed (was the "subdir for lume pages" ask)
 - [x] Need to invalidate stylesheet on deploy (should I invalidate everything? in the cloudfront cache?)
 - [x] Better mobile styling
