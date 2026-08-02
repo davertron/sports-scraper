@@ -1,9 +1,10 @@
 import type { CairnsGame, Game } from "../types.ts";
 import { toUTCMillis } from "./formatters.ts";
+import { fetchWithRetry } from "./fetchWithRetry.ts";
 
 export async function scrapeDruckermanGames({raw}: {raw?: boolean} = {}): Promise<Game[] | CairnsGame[]> {
   // Scrape Cairns games
-  const cairnsResponse = await fetch("https://cairnsarena.finnlyconnect.com/schedule/460");
+  const cairnsResponse = await fetchWithRetry("https://cairnsarena.finnlyconnect.com/schedule/460");
   const cairnsHtml = await cairnsResponse.text();
 
   // Extract the JSON data from the script tag
@@ -59,7 +60,7 @@ export async function scrapeDruckermanGames({raw}: {raw?: boolean} = {}): Promis
   const essexQueryString = new URLSearchParams(essexUrlParams).toString();
   const essexFullUrl = `${essexBaseUrl}?${essexQueryString}`;
 
-  const essexResponse = await fetch(essexFullUrl, {
+  const essexResponse = await fetchWithRetry(essexFullUrl, {
     method: 'GET',
     headers: {
       'Accept': 'application/json',

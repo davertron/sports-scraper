@@ -1,6 +1,7 @@
 import * as cheerio from "cheerio";
 import type { Game } from "../types.ts";
 import { monthNameToNumber, to24Hour, zonedMillis } from "./formatters.ts";
+import { fetchWithRetry } from "./fetchWithRetry.ts";
 
 const FULL_STRIDE_URL = "https://fullstridestaging.com/schedule_nf.php?league=1&programme_abbr=SDU";
 
@@ -36,7 +37,7 @@ function parseDate(dateString: string): { startTime: number; cancelled: boolean 
 }
 
 export async function scrapeIcePackGames(): Promise<Game[]> {
-  const response = await fetch(FULL_STRIDE_URL);
+  const response = await fetchWithRetry(FULL_STRIDE_URL);
   const html = await response.text();
 
   const allGames: Game[] = [];

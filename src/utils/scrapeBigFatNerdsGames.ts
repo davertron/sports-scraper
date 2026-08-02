@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 import type { Game } from "../types.ts";
 import { monthNameToNumber, to24Hour, zonedMillis } from "./formatters.ts";
+import { fetchWithRetry } from "./fetchWithRetry.ts";
 
 // NOTE: Website to find the schedule: https://www.socialsportsvt.com/summer-coed-schedule--results--and-standings#Schedule
 
@@ -12,7 +13,7 @@ const RESULTS_GID = "520016829";
 
 async function fetchSheetTab(gid: string): Promise<string> {
   const url = `https://docs.google.com/spreadsheets/d/e/${PUBLISHED_SHEET_ID}/pub?gid=${gid}&single=true&output=tsv`;
-  const response = await fetch(url);
+  const response = await fetchWithRetry(url);
   if (!response.ok) {
     throw new Error(`Failed to fetch Google Sheets data: ${response.statusText}`);
   }

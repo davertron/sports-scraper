@@ -7,6 +7,7 @@
 // declarations, so it never has a reason to open those files.
 const { formatGameTime, formatTime } = await import("../utils/formatters.ts");
 const { overrideGames } = await import("../utils/overrideGames.ts");
+const { fetchWithRetry } = await import("../utils/fetchWithRetry.ts");
 
 // 'M/d (EEE)' style label, e.g. "5/7 (Wed)" -- matches the old date-fns-tz
 // formatInTimeZone(ts, 'America/New_York', 'M/d (EEE)') output.
@@ -53,7 +54,7 @@ function convertToTableRow(game) {
 }
 
 export default async function () {
-  const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
+  const response = await fetchWithRetry("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
   const games = overrideGames(await response.json());
 
   // Let's generate a calendar view for this week and the following two weeks.

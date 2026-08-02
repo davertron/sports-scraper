@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 import type { Game } from "./types.ts";
 import { uploadCalendarToS3 } from "./utils/s3.ts";
+import { fetchWithRetry } from "./utils/fetchWithRetry.ts";
 
 export function generateICS(calendarName: string, games: Game[]): string {
   const now = new Date();
@@ -67,7 +68,7 @@ export function generateICS(calendarName: string, games: Game[]): string {
 async function main() {
   try {
     console.log("Fetching hockey games data...");
-    const response = await fetch("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
+    const response = await fetchWithRetry("https://d1msdfi79mlr9u.cloudfront.net/hockey-games/latest.json");
     const games = await response.json() as Game[];
     
     console.log(`Generating calendar for ${games.length} games...`);
