@@ -1,5 +1,4 @@
 import { getKey, getChordTones, Note } from "./notes";
-import { filterToCagedChordTones, CagedShape } from "./caged";
 import { Marker } from "../components/Fretboard";
 export type Transform = {
   type: 'filter' | 'map';
@@ -30,9 +29,6 @@ export function applyTransforms(notes: (Note | Marker)[], transforms: Transform[
                         break;
                     case 'on-strings':
                         result = result.filter(note => transform.args[1].includes(note.string));
-                        break;
-                    case 'caged-shape':
-                        result = filterToCagedChordTones(result, transform.args[1], transform.args[2] as CagedShape);
                         break;
                     case 'chord-of':
                         const chordTones = getChordTones(transform.args[1], transform.args[2] as 'major' | 'minor');

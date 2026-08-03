@@ -4,19 +4,19 @@
 - [ ] Clean up CSS, especially on the sports page, it's a mess and half styles are in the file and half are in styles.css. Maybe just use Tailwind?
 - [ ] @guitar: Update page layout to take up the whole screen, make sure fretboard is scalable and resizes with viewport
 - [ ] @guitar: Add a "scale" mode to the guitar app, where you can select a scale and see the positions of the notes on the fretboard.
-- [ ] @guitar: Add a "chord" mode to the guitar app, where you can select a chord and see the positions of the notes on the fretboard.
 
 ## Medium Priority
 - [ ] @guitar: Add a "without" filter for notes/degrees
-- [ ] @guitar: Add pentatonic scale support for a given root/key. Needs its own positional/zone concept -- CAGED shapes turned out to mean chord tones only (see below), not a scale-box region, so pentatonic can't just subset a CAGED window like originally planned.
-- [ ] @guitar: "Practical CAGED" shapes -- couldn't verify Dustin Hofsess's actual shape specifics online (found only marketing pages, plus one possibly-unrelated third-party "practical CAGED" resource describing chord *grips* rather than scale-shape zones). Need Dustin to provide the real shapes/screenshots.
+- [ ] @guitar: Add pentatonic scale support for a given root/key
 - [ ] @guitar: Support multiple fretboards on screen dynamically (currently always exactly one, bound to one transform pipeline)
-- [ ] @guitar: Natural language input ("overlay C minor pentatonic with CAGED shapes for these 3 chords") -- translate to the existing transform pipeline via an LLM call once the above are solid; hold off until CAGED/pentatonic/multi-fretboard are manually verified correct
+- [ ] @guitar: Natural language input ("overlay C minor pentatonic with these chords") -- translate to the existing transform pipeline via an LLM call once the above are solid; hold off until pentatonic/multi-fretboard are manually verified correct
 - [ ] @guitar: Vertical fretboard orientation, not just horizontal (low priority)
 
 ## Low Priority
 
 ## Completed
+- [x] @guitar: Add a "chord" mode -- covered by the "chord of" filter (root + major/minor -> root/3rd/5th positions).
+- [x] @guitar: Removed the CAGED shape filter entirely -- "chord of" combined with "between frets" covers the same need (a chord's tones within a chosen neck region) without a separate CAGED-specific concept to maintain/explain. Also dropped the "practical CAGED" idea, no longer needed.
 - [x] @guitar: Encode all displayed state in the URL (?state=<base64 JSON of the transforms array>), synced on every change via a signals effect(), using history.replaceState so routine filter tweaks don't spam the back button. Falls back to the default setup if the param is missing or doesn't decode into something valid (old/corrupted/foreign links).
 - [x] @guitar: Add "chord of" filter (root + major/minor -> every root/3rd/5th on the whole neck). Originally going to add an "all shapes" option to CAGED specifically for seeing how the 5 shapes connect, but that's redundant with this -- verified the two are nearly identical (all-5-shapes-union only misses the highest-octave repeat near fret 12-16 that a plain interval filter also happens to catch), and this is simpler/more general.
 - [x] @guitar: Add CAGED shape filter (root + shape -> chord-tone positions: root/3rd/5th, with the standard doubled tones). First attempt modeled shapes as wide scale-box fret-windows, which was wrong -- CAGED means the actual open chord shapes moved up the neck, just a handful of chord tones, not a scale region. Rebuilt around the real open-chord fingerings (verified against x32010/x02220/320003/022100/xx0232) once that was clarified.
