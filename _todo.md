@@ -8,7 +8,7 @@
 
 ## Medium Priority
 - [ ] @guitar: Add a "without" filter for notes/degrees
-- [ ] @guitar: Add pentatonic scale support for a given root/key (subset of CAGED shape notes)
+- [ ] @guitar: Add pentatonic scale support for a given root/key. Needs its own positional/zone concept -- CAGED shapes turned out to mean chord tones only (see below), not a scale-box region, so pentatonic can't just subset a CAGED window like originally planned.
 - [ ] @guitar: "Practical CAGED" shapes -- couldn't verify Dustin Hofsess's actual shape specifics online (found only marketing pages, plus one possibly-unrelated third-party "practical CAGED" resource describing chord *grips* rather than scale-shape zones). Need Dustin to provide the real shapes/screenshots.
 - [ ] @guitar: Support multiple fretboards on screen dynamically (currently always exactly one, bound to one transform pipeline)
 - [ ] @guitar: Encode all displayed state in the URL so setups are bookmarkable/shareable
@@ -18,7 +18,7 @@
 ## Low Priority
 
 ## Completed
-- [x] @guitar: Add CAGED shape filter (root + shape -> fretboard zone), derived from real open-chord finger positions. Caught and fixed a real bug via testing: D-shape's window was mathematically identical to E-shape's for every root until corrected.
+- [x] @guitar: Add CAGED shape filter (root + shape -> chord-tone positions: root/3rd/5th, with the standard doubled tones). First attempt modeled shapes as wide scale-box fret-windows, which was wrong -- CAGED means the actual open chord shapes moved up the neck, just a handful of chord tones, not a scale region. Rebuilt around the real open-chord fingerings (verified against x32010/x02220/320003/022100/xx0232) once that was clarified.
 - [x] Add favicon -- cropped from the homepage avatar (static/vector_me.png)
 - [x] Switched off Deno/Lume to Node + Eleventy -- pages live under src/pages with no explicit per-file exclusion needed (was the "subdir for lume pages" ask)
 - [x] Need to invalidate stylesheet on deploy (should I invalidate everything? in the cloudfront cache?)
