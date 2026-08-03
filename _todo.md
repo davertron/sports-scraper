@@ -8,10 +8,17 @@
 
 ## Medium Priority
 - [ ] @guitar: Add a "without" filter for notes/degrees
+- [ ] @guitar: Add pentatonic scale support for a given root/key (subset of CAGED shape notes)
+- [ ] @guitar: "Practical CAGED" shapes -- couldn't verify Dustin Hofsess's actual shape specifics online (found only marketing pages, plus one possibly-unrelated third-party "practical CAGED" resource describing chord *grips* rather than scale-shape zones). Need Dustin to provide the real shapes/screenshots.
+- [ ] @guitar: Support multiple fretboards on screen dynamically (currently always exactly one, bound to one transform pipeline)
+- [ ] @guitar: Encode all displayed state in the URL so setups are bookmarkable/shareable
+- [ ] @guitar: Natural language input ("overlay C minor pentatonic with CAGED shapes for these 3 chords") -- translate to the existing transform pipeline via an LLM call once the above are solid; hold off until CAGED/pentatonic/multi-fretboard are manually verified correct
+- [ ] @guitar: Vertical fretboard orientation, not just horizontal (low priority)
 
 ## Low Priority
 
 ## Completed
+- [x] @guitar: Add CAGED shape filter (root + shape -> fretboard zone), derived from real open-chord finger positions. Caught and fixed a real bug via testing: D-shape's window was mathematically identical to E-shape's for every root until corrected.
 - [x] Add favicon -- cropped from the homepage avatar (static/vector_me.png)
 - [x] Switched off Deno/Lume to Node + Eleventy -- pages live under src/pages with no explicit per-file exclusion needed (was the "subdir for lume pages" ask)
 - [x] Need to invalidate stylesheet on deploy (should I invalidate everything? in the cloudfront cache?)

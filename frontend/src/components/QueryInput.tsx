@@ -2,6 +2,9 @@ import { Transform } from '../utils/transforms';
 import { Signal } from '@preact/signals';
 import { margin } from '../constants';
 import { NOTE_ORDER } from '../utils/notes';
+import { CagedShape } from '../utils/caged';
+
+const CAGED_SHAPES: CagedShape[] = ['C', 'A', 'G', 'E', 'D'];
 
 interface QueryInputProps {
   transforms: Signal<Transform[]>;
@@ -40,6 +43,9 @@ export function QueryInput({ transforms }: QueryInputProps) {
       newTransforms[transformIndex].args[1] = 'E,A,e';
     } else if (value === 'key-of') {
       newTransforms[transformIndex].args[1] = 'C';
+    } else if (value === 'caged-shape') {
+      newTransforms[transformIndex].args[1] = 'C';
+      newTransforms[transformIndex].args[2] = 'E';
     }
 
     transforms.value = newTransforms;
@@ -54,6 +60,18 @@ export function QueryInput({ transforms }: QueryInputProps) {
   function updateOnStrings(transformIndex: number, value: string) {
     const newTransforms = [...transforms.value];
     newTransforms[transformIndex].args[1] = value;
+    transforms.value = newTransforms;
+  }
+
+  function updateCagedShapeRoot(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[1] = value;
+    transforms.value = newTransforms;
+  }
+
+  function updateCagedShapeShape(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[2] = value;
     transforms.value = newTransforms;
   }
 
@@ -124,8 +142,9 @@ export function QueryInput({ transforms }: QueryInputProps) {
               <option value="key-of">Key of</option>
               <option value="between-frets">Between frets</option>
               <option value="on-strings">On strings</option>
+              <option value="caged-shape">CAGED shape</option>
             </select>
-            
+
           )}
           {t.type === 'filter' && t.args[0] === 'key-of' && (
               <select value={t.args[1]} onChange={e => updateKeyOfTransform(transformIndex, (e.target as HTMLSelectElement).value)}>
@@ -142,6 +161,20 @@ export function QueryInput({ transforms }: QueryInputProps) {
           {t.type === 'filter' && t.args[0] === 'on-strings' && (
             <>
               <input type="text" value={t.args[1]} onChange={e => updateOnStrings(transformIndex, (e.target as HTMLInputElement).value)} />
+            </>
+          )}
+          {t.type === 'filter' && t.args[0] === 'caged-shape' && (
+            <>
+              <select value={t.args[1]} onChange={e => updateCagedShapeRoot(transformIndex, (e.target as HTMLSelectElement).value)}>
+                {NOTE_ORDER.map(note => (
+                  <option value={note}>{note}</option>
+                ))}
+              </select>
+              <select value={t.args[2]} onChange={e => updateCagedShapeShape(transformIndex, (e.target as HTMLSelectElement).value)}>
+                {CAGED_SHAPES.map(shape => (
+                  <option value={shape}>{shape} shape</option>
+                ))}
+              </select>
             </>
           )}
           {t.type === 'map' && (
