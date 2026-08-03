@@ -1,4 +1,4 @@
-import { getKey, getChordTones, Note } from "./notes";
+import { getKey, getChordTones, getPentatonicTones, Note } from "./notes";
 import { Marker } from "../components/Fretboard";
 export type Transform = {
   type: 'filter' | 'map';
@@ -33,6 +33,10 @@ export function applyTransforms(notes: (Note | Marker)[], transforms: Transform[
                     case 'chord-of':
                         const chordTones = getChordTones(transform.args[1], transform.args[2] as 'major' | 'minor');
                         result = result.filter(note => note.note && chordTones.includes(note.note));
+                        break;
+                    case 'pentatonic-of':
+                        const pentatonicTones = getPentatonicTones(transform.args[1], transform.args[2] as 'major' | 'minor');
+                        result = result.filter(note => note.note && pentatonicTones.includes(note.note));
                         break;
                 }
                 break;

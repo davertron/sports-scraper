@@ -7,13 +7,13 @@
 
 ## Medium Priority
 - [ ] @guitar: Add a "without" filter for notes/degrees
-- [ ] @guitar: Add pentatonic scale support for a given root/key
-- [ ] @guitar: Natural language input ("overlay C minor pentatonic with these chords") -- translate to the existing transform pipeline via an LLM call once the above are solid; hold off until pentatonic/multi-fretboard are manually verified correct
+- [ ] @guitar: Natural language input ("overlay C minor pentatonic with these chords") -- translate to the existing transform pipeline via an LLM call. Pentatonic + multi-fretboard are both done now, so this is unblocked whenever we want it.
 - [ ] @guitar: Vertical fretboard orientation, not just horizontal (low priority)
 
 ## Low Priority
 
 ## Completed
+- [x] @guitar: Add "pentatonic of" filter (root + major/minor -> the 5-note pentatonic scale). Shares the same notesFromIntervals helper as getKey/getChordTones now (was 3 near-identical "root + intervals -> note names" implementations before this, worth consolidating once there were that many). Verified against the well-known A minor pentatonic (A,C,D,E,G) and C major pentatonic (C,D,E,G,A).
 - [x] @guitar: Support multiple fretboards on screen dynamically. Split main.tsx into a thin bootstrap + App.tsx holding a list of independent board signals (each with its own transforms, reusing QueryInput/Fretboard unchanged per board). URL state (?state=) now holds one Transform[] per board, with a compatibility path for pre-multi-fretboard links (a bare Transform[] is treated as a single board). Verified with real render+click DOM tests (preact/test-utils, already bundled with preact -- no new dependency), including a regression test for a real risk this design has: QueryInput mutates transform objects in place, so a new board's default filters must be deep-cloned or two boards would silently edit each other's state.
 - [x] @guitar: Add a "chord" mode -- covered by the "chord of" filter (root + major/minor -> root/3rd/5th positions).
 - [x] @guitar: Removed the CAGED shape filter entirely -- "chord of" combined with "between frets" covers the same need (a chord's tones within a chosen neck region) without a separate CAGED-specific concept to maintain/explain. Also dropped the "practical CAGED" idea, no longer needed.

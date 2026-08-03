@@ -42,23 +42,31 @@ export function generateNotes(numberOfFrets: number): Note[] {
   return notes;
 }
 
-export function getKey(note: string): string[] {
-  const key = [];
+// Shared by every "root note + semitone intervals -> note names" helper
+// below (getKey, getChordTones, getPentatonicTones).
+function notesFromIntervals(note: string, intervals: number[]): string[] {
   const root = NOTE_ORDER.indexOf(note.toUpperCase());
-  const intervals = [0, 2, 4, 5, 7, 9, 11]; // Distance from root; Jump with 2, 2, 1, 2, 2, 2, 1
-  for (let i = 0; i < intervals.length; i++) {
-    key.push(NOTE_ORDER[(root + intervals[i]) % NOTE_ORDER.length]);
-  }
-  return key;
+  return intervals.map(interval => NOTE_ORDER[(root + interval) % NOTE_ORDER.length]);
+}
+
+export function getKey(note: string): string[] {
+  // Distance from root; whole/half-step pattern W-W-H-W-W-W-H
+  return notesFromIntervals(note, [0, 2, 4, 5, 7, 9, 11]);
 }
 
 // Root, 3rd, and perfect 5th only -- the notes a CAGED chord shape (or any
 // plain major/minor chord) is actually built from.
 export function getChordTones(note: string, quality: 'major' | 'minor' = 'major'): string[] {
-  const root = NOTE_ORDER.indexOf(note.toUpperCase());
   const thirdInterval = quality === 'major' ? 4 : 3;
-  const intervals = [0, thirdInterval, 7];
-  return intervals.map(interval => NOTE_ORDER[(root + interval) % NOTE_ORDER.length]);
+  return notesFromIntervals(note, [0, thirdInterval, 7]);
+}
+
+// Major pentatonic omits the 4th and 7th of the major scale (degrees
+// 1,2,3,5,6); minor pentatonic omits the 2nd and 6th of the natural minor
+// scale (degrees 1,b3,4,5,b7). E.g. A minor pentatonic = A,C,D,E,G.
+export function getPentatonicTones(note: string, quality: 'major' | 'minor' = 'major'): string[] {
+  const intervals = quality === 'major' ? [0, 2, 4, 7, 9] : [0, 3, 5, 7, 10];
+  return notesFromIntervals(note, intervals);
 }
 
 export function getScaleDegrees(note: string, scaleType: 'major' | 'minor') {
