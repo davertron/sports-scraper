@@ -18,6 +18,7 @@
 ## Low Priority
 
 ## Completed
+- [x] @guitar: Add "chord of" filter (root + major/minor -> every root/3rd/5th on the whole neck). Originally going to add an "all shapes" option to CAGED specifically for seeing how the 5 shapes connect, but that's redundant with this -- verified the two are nearly identical (all-5-shapes-union only misses the highest-octave repeat near fret 12-16 that a plain interval filter also happens to catch), and this is simpler/more general.
 - [x] @guitar: Add CAGED shape filter (root + shape -> chord-tone positions: root/3rd/5th, with the standard doubled tones). First attempt modeled shapes as wide scale-box fret-windows, which was wrong -- CAGED means the actual open chord shapes moved up the neck, just a handful of chord tones, not a scale region. Rebuilt around the real open-chord fingerings (verified against x32010/x02220/320003/022100/xx0232) once that was clarified.
 - [x] Add favicon -- cropped from the homepage avatar (static/vector_me.png)
 - [x] Switched off Deno/Lume to Node + Eleventy -- pages live under src/pages with no explicit per-file exclusion needed (was the "subdir for lume pages" ask)

@@ -52,6 +52,15 @@ export function getKey(note: string): string[] {
   return key;
 }
 
+// Root, 3rd, and perfect 5th only -- the notes a CAGED chord shape (or any
+// plain major/minor chord) is actually built from.
+export function getChordTones(note: string, quality: 'major' | 'minor' = 'major'): string[] {
+  const root = NOTE_ORDER.indexOf(note.toUpperCase());
+  const thirdInterval = quality === 'major' ? 4 : 3;
+  const intervals = [0, thirdInterval, 7];
+  return intervals.map(interval => NOTE_ORDER[(root + interval) % NOTE_ORDER.length]);
+}
+
 export function getScaleDegrees(note: string, scaleType: 'major' | 'minor') {
   const root = NOTE_ORDER.indexOf(note.toUpperCase());
   const intervals = scaleType === 'major' ? [0, 2, 4, 5, 7, 9, 11] : [0, 2, 3, 5, 7, 8, 10];

@@ -46,6 +46,9 @@ export function QueryInput({ transforms }: QueryInputProps) {
     } else if (value === 'caged-shape') {
       newTransforms[transformIndex].args[1] = 'C';
       newTransforms[transformIndex].args[2] = 'E';
+    } else if (value === 'chord-of') {
+      newTransforms[transformIndex].args[1] = 'C';
+      newTransforms[transformIndex].args[2] = 'major';
     }
 
     transforms.value = newTransforms;
@@ -70,6 +73,18 @@ export function QueryInput({ transforms }: QueryInputProps) {
   }
 
   function updateCagedShapeShape(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[2] = value;
+    transforms.value = newTransforms;
+  }
+
+  function updateChordOfRoot(transformIndex: number, value: string) {
+    const newTransforms = [...transforms.value];
+    newTransforms[transformIndex].args[1] = value;
+    transforms.value = newTransforms;
+  }
+
+  function updateChordOfQuality(transformIndex: number, value: string) {
     const newTransforms = [...transforms.value];
     newTransforms[transformIndex].args[2] = value;
     transforms.value = newTransforms;
@@ -143,6 +158,7 @@ export function QueryInput({ transforms }: QueryInputProps) {
               <option value="between-frets">Between frets</option>
               <option value="on-strings">On strings</option>
               <option value="caged-shape">CAGED shape</option>
+              <option value="chord-of">Chord of</option>
             </select>
 
           )}
@@ -174,6 +190,19 @@ export function QueryInput({ transforms }: QueryInputProps) {
                 {CAGED_SHAPES.map(shape => (
                   <option value={shape}>{shape} shape</option>
                 ))}
+              </select>
+            </>
+          )}
+          {t.type === 'filter' && t.args[0] === 'chord-of' && (
+            <>
+              <select value={t.args[1]} onChange={e => updateChordOfRoot(transformIndex, (e.target as HTMLSelectElement).value)}>
+                {NOTE_ORDER.map(note => (
+                  <option value={note}>{note}</option>
+                ))}
+              </select>
+              <select value={t.args[2]} onChange={e => updateChordOfQuality(transformIndex, (e.target as HTMLSelectElement).value)}>
+                <option value="major">Major</option>
+                <option value="minor">Minor</option>
               </select>
             </>
           )}
