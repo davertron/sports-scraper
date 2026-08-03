@@ -8,13 +8,13 @@
 ## Medium Priority
 - [ ] @guitar: Add a "without" filter for notes/degrees
 - [ ] @guitar: Add pentatonic scale support for a given root/key
-- [ ] @guitar: Support multiple fretboards on screen dynamically (currently always exactly one, bound to one transform pipeline)
 - [ ] @guitar: Natural language input ("overlay C minor pentatonic with these chords") -- translate to the existing transform pipeline via an LLM call once the above are solid; hold off until pentatonic/multi-fretboard are manually verified correct
 - [ ] @guitar: Vertical fretboard orientation, not just horizontal (low priority)
 
 ## Low Priority
 
 ## Completed
+- [x] @guitar: Support multiple fretboards on screen dynamically. Split main.tsx into a thin bootstrap + App.tsx holding a list of independent board signals (each with its own transforms, reusing QueryInput/Fretboard unchanged per board). URL state (?state=) now holds one Transform[] per board, with a compatibility path for pre-multi-fretboard links (a bare Transform[] is treated as a single board). Verified with real render+click DOM tests (preact/test-utils, already bundled with preact -- no new dependency), including a regression test for a real risk this design has: QueryInput mutates transform objects in place, so a new board's default filters must be deep-cloned or two boards would silently edit each other's state.
 - [x] @guitar: Add a "chord" mode -- covered by the "chord of" filter (root + major/minor -> root/3rd/5th positions).
 - [x] @guitar: Removed the CAGED shape filter entirely -- "chord of" combined with "between frets" covers the same need (a chord's tones within a chosen neck region) without a separate CAGED-specific concept to maintain/explain. Also dropped the "practical CAGED" idea, no longer needed.
 - [x] @guitar: Encode all displayed state in the URL (?state=<base64 JSON of the transforms array>), synced on every change via a signals effect(), using history.replaceState so routine filter tweaks don't spam the back button. Falls back to the default setup if the param is missing or doesn't decode into something valid (old/corrupted/foreign links).
