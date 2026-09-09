@@ -3,9 +3,45 @@ _cache
 .env
 frontend/node_modules
 
-# root node_modules IS tracked (see package.json "dependencies") -- it's
-# vendored so `npm run scrape`/`npm run calendar` never need `npm install`.
-# devDependencies (typescript, @types/node, eleventy, tailwind CLI) are
-# intentionally NOT vendored -- tailwind ships platform-specific native
-# binaries that can't be safely committed. Run `npm install` locally once
-# if you want `npm run typecheck` or `npm run build` to work.
+# Root node_modules is a deliberate partial vendor, not a normal
+# node_modules: the runtime deps (package.json "dependencies": aws4fetch,
+# cheerio, and their transitive deps) ARE committed, so `npm run scrape` /
+# `npm run calendar` never need `npm install` (see the GitHub workflows and
+# README). devDependencies (typescript, @types/node, eleventy, tailwind
+# CLI, ...) are NOT vendored -- tailwind ships platform-specific native
+# binaries that can't be safely committed -- so `npm install` locally is
+# only needed for `npm run typecheck` / `npm run build`.
+#
+# To keep those un-vendored devDependency folders from showing up as noise
+# in `git status` (or getting swept into a `git add .`) once someone runs
+# `npm install` locally, ignore everything under the top level of root
+# node_modules EXCEPT the packages actually vendored, allow-listed below.
+#
+# Maintenance: if you add/remove/upgrade a runtime dependency in
+# package.json, `git ls-files node_modules | awk -F/ '{print $2}' | sort -u`
+# shows what's currently tracked -- update the allow-list below to match
+# and `git add`/`git rm` the affected folders.
+/node_modules/*
+!/node_modules/.package-lock.json
+!/node_modules/aws4fetch
+!/node_modules/boolbase
+!/node_modules/cheerio
+!/node_modules/cheerio-select
+!/node_modules/css-select
+!/node_modules/css-what
+!/node_modules/dom-serializer
+!/node_modules/domelementtype
+!/node_modules/domhandler
+!/node_modules/domutils
+!/node_modules/encoding-sniffer
+!/node_modules/entities
+!/node_modules/htmlparser2
+!/node_modules/iconv-lite
+!/node_modules/nth-check
+!/node_modules/parse5
+!/node_modules/parse5-htmlparser2-tree-adapter
+!/node_modules/parse5-parser-stream
+!/node_modules/safer-buffer
+!/node_modules/undici
+!/node_modules/whatwg-encoding
+!/node_modules/whatwg-mimetype
