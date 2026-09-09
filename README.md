@@ -333,6 +333,34 @@ of spots (`overrideGames.ts`'s hardcoded score overrides) intentionally match on
 local calendar day rather than a fixed zone, mirroring the previous date-fns behavior. Wrong
 system TZ on a runner would make those overrides silently stop matching.
 
+## ⚠️ Known Gotchas
+
+### Essex Druckerman games silently disappearing (fixed, but watch for regressions)
+
+`scrapeDruckermanGames.ts` queries two sources for Druckerman's schedule: Cairns (no date
+filter -- it just filters the live schedule by `AccountName`) and Essex (a date-range query
+against `vt3.mlschedules.com`, since that API needs an explicit `start`/`end` window).
+
+Essex's date window used to be **hardcoded** to that season's actual dates (e.g.
+`2025-09-01` to `2026-04-01`). Once the season it named ended, the window was entirely in the
+past, so the Essex query returned nothing -- with no error anywhere. The site and calendar
+kept working, just silently down to Cairns games only. This bit us in September 2026, when a
+new season's Essex games hadn't been scraped because the window still pointed at the season
+that ended the previous April.
+
+**Fix**: the window is now computed from `Temporal.Now.plainDateISO(...)` each run
+(Sept 1 - Apr 1, flipping to the next season in July) instead of being hardcoded -- see the
+`GOTCHA` comment in [`scrapeDruckermanGames.ts`](src/utils/scrapeDruckermanGames.ts). It's
+anchored to the season's *start*, not to a rolling "N months from today" window, because
+`scrapeAndUpload.ts` fully replaces the stored game data each run rather than merging with
+history -- a window that rolls forward with today would drop early-season games (and their
+scores) as they age out of it, even mid-season.
+
+**If Essex games go missing again**: check that this logic is still in place (i.e. nobody
+reverted it back to hardcoded dates), and sanity-check the computed `start`/`end` against
+today's date. If Essex changes their API/site entirely, you'll need to redo the scraping logic,
+not just the dates.
+
 ## 🐛 Troubleshooting
 
 ### Why don't I see my changes in the UI?
@@ -492,6 +520,8 @@ No manual intervention required for normal operations.
 - 📅 **Calendars auto-generate after data updates**
 - 🚀 **Site auto-deploys daily and on code changes**
 - 🧰 **The whole stack runs on Node 26+ now** (see `.nvmrc`) -- Temporal (native date/time, no more date-fns/luxon), and Eleventy replacing the old Deno-based Lume SSG.
+- 📆 **Essex Druckerman games can silently disappear** if the season date window in
+  `scrapeDruckermanGames.ts` ever regresses to a hardcoded range -- see "Known Gotchas" above.
 
 ## 📝 Changelog
 
